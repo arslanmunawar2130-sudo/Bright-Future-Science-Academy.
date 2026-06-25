@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bright Future Science Academy</title>
+    <style>
+        :root {
+            --primary-color: #1B365D;
+            --secondary-color: #2b4c7e;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --whatsapp-color: #25D366;
+            --purple-color: #6f42c1;
+            --holiday-color: #ff9800;
+            --light-bg: #f4f6f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        /* Dashboards */
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .dash-card {
+            flex: 1;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .dash-card.monthly { border-top-color: var(--success-color); }
+        .dash-card.yearly { border-top-color: var(--warning-color); }
+        .dash-card.lifetime { border-top-color: #17a2b8; }
+        
+        .dash-card.presents { border-top-color: var(--success-color); background: #f0fdf4; }
+        .dash-card.absents { border-top-color: var(--danger-color); background: #fef2f2; }
+        .dash-card.collections { border-top-color: var(--purple-color); background: #faf5ff; }
+
+        .dash-card h4 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
+        .dash-card p { margin: 5px 0 0 0; font-size: 16px; font-weight: bold; color: #222; }
+
+        /* Tabs Styling */
+        .tabs-nav {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 2px;
+            border: none;
+            background: none;
+            font-weight: bold;
+            font-size: 11px;
+            color: #666;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background-color: #f0f4f8;
+        }
+
+        .tab-panel {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tab-panel.active { display: block; }
+
+        h3 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid #f0f4f8; padding-bottom: 8px; font-size: 15px; }
+        h4 { color: var(--secondary-color); margin-bottom: 8px; font-size: 14px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+
+        button.btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-bulk-mega {
+            background-color: var(--purple-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 6px rgba(111, 66, 193, 0.3);
+        }
+
+        .btn-danger-reset {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* Filter Styles */
+        .filter-section {
+            background: #eef2f7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-section label { margin: 0; font-size: 12px; white-space: nowrap; }
+
+        .table-responsive { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid #e0e0e0; padding: 10px 8px; text-align: left; }
+        th { background-color: var(--primary-color); color: white; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f9fbfd; }
+
+        /* Styles for Register Sheet View */
+        .register-table th, .register-table td {
+            padding: 4px 6px;
+            text-align: center;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .register-table td.p-cell { background-color: #d1e7dd; color: #0f5132; font-weight: bold; }
+        .register-table td.a-cell { background-color: #f8d7da; color: #842029; font-weight: bold; }
+        .register-table td.h-cell { background-color: #fff3cd; color: #856404; font-size: 10px; font-weight: bold; max-width: 60px; overflow: hidden; text-overflow: ellipsis; }
+        .register-table td.empty-cell { color: #ccc; }
+
+        .action-btn { padding: 6px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; font-size: 11px; cursor: pointer; margin: 2px; }
+        .btn-pay { background-color: var(--success-color); }
+        .btn-warn { background-color: var(--warning-color); color: #333; }
+        .btn-wa { background-color: var(--whatsapp-color); color: white; }
+        .btn-del { background-color: var(--danger-color); }
+        
+        .class-count-badge { background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+        .report-box { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 6px; margin-top: 15px; }
+        
+        /* PDF LAYOUT CARD STYLING */
+        .pdf-report-card {
+            background: white;
+            border: 3px double var(--primary-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .pdf-header {
+            text-align: center;
+            border-bottom: 3px dashed var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-header h2 { margin: 0; color: var(--primary-color); font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+        .pdf-header p { margin: 5px 0 0 0; font-size: 12px; color: #555; font-weight: 600; }
+
+        .pdf-student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .pdf-info-item { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .pdf-info-item span.label { color: #666; font-weight: 600; }
+        .pdf-info-item span.value { color: #111; font-weight: 700; }
+
+        .pdf-section-title { background: var(--primary-color); color: white; padding: 6px 12px; font-size: 13px; font-weight: bold; border-radius: 4px; margin-top: 20px; margin-bottom: 10px; }
+        .pdf-table { width: 100%; margin-bottom: 15px; }
+        .pdf-table th { background: #eef2f7; color: var(--primary-color); font-size: 12px; padding: 8px; border: 1px solid #cbd5e1; }
+        .pdf-table td { font-size: 13px; padding: 8px; border: 1px solid #cbd5e1; }
+        .pdf-footer-note { text-align: center; font-size: 11px; color: #777; margin-top: 25px; border-top: 1px solid #ddd; padding-top: 10px; font-style: italic; }
+        .btn-pdf-print { background-color: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* BACKUP MODULE STYLING */
+        .backup-vault-box {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            border: 2px dashed #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .backup-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-backup-export {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 160px;
+            text-align: center;
+        }
+        .btn-backup-import {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printable_pdf_area, #printable_pdf_area * { visibility: visible; }
+            #printable_pdf_area { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+            .btn-pdf-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        Bright Future Science Academy
+    </div>
+
+    <div class="container">
+        
+        <!-- HARDWARE SAFE INTERNAL MEMORY BACKUP PROTECTION -->
+        <div class="backup-vault-box">
+            <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Mobile Memory Data Security Vault (Anti-Delete Protection)</h4>
+            <p style="margin:5px 0 0 0; font-size:12px; color:#555;">
+                Browser ke data delete karne se bachne ke liye roz kaam ke baad data **Mobile Internal Memory** mein save karein!
+            </p>
+            <div class="backup-btn-group">
+                <button class="btn-backup-export" onclick="exportAcademyBackupFile()">📥 Download Data Backup (Save in Mobile Memory)</button>
+                <button class="btn-backup-import" onclick="document.getElementById('import_file_input').click()">📤 Upload Backup File (Restore All Data)</button>
+                <input type="file" id="import_file_input" style="display:none;" accept=".txt" onchange="importAcademyBackupFile(this)">
+            </div>
+        </div>
+
+        <!-- FINANCIAL DASHBOARD -->
+        <div class="dashboard">
+            <div class="dash-card monthly"><h4>Monthly Fees</h4><p id="dash_month">Rs. 0</p></div>
+            <div class="dash-card yearly"><h4>Yearly Fees</h4><p id="dash_year">Rs. 0</p></div>
+            <div class="dash-card lifetime"><h4>Lifetime Fees</h4><p id="dash_life">Rs. 0</p></div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('registration')">1. Register</button>
+            <button class="tab-btn" onclick="switchTab('attendance')">2. Attendance</button>
+            <button class="tab-btn" onclick="switchTab('fees')">3. Fees Record</button>
+            <button class="tab-btn" onclick="switchTab('tests')">4. Test Marks</button>
+            <button class="tab-btn" onclick="switchTab('reports')">📊 Reports & Registers</button>
+        </div>
+
+        <!-- TAB 1: STUDENT REGISTRATION -->
+        <div id="registration" class="tab-panel active">
+            <h3>Naya Student Entry</h3>
+            <div class="form-group"><label>Roll Number:</label><input type="text" id="reg_roll" placeholder="E.g. 101"></div>
+            <div class="form-group"><label>Student Name:</label><input type="text" id="reg_name" placeholder="E.g. Ali Ahmad"></div>
+            <div class="form-group"><label>Select Class:</label><select id="reg_class"></select></div>
+            <div class="form-group"><label>Parent Phone Number:</label><input type="tel" id="reg_phone" placeholder="E.g. 923001234567"></div>
+            <div class="form-group"><label>Assign Monthly Fee Amount (Rs.):</label><input type="number" id="reg_fee" placeholder="E.g. 2500" value="2500"></div>
+            <div class="form-group"><label>Admission Date:</label><input type="text" id="reg_adm_date" placeholder="DD-MM-YYYY"></div>
+            <button class="btn" onclick="saveStudent()">Save Student Data</button>
+
+            <h3 style="margin-top:25px;">Registered Students Record Filter</h3>
+            <div class="filter-section">
+                <label>🔍 Filter By Class:</label>
+                <select id="filter_class_reg" onchange="renderStudentList()"><option value="All">All Academy Students</option></select>
+                <span id="class_count_display" class="class-count-badge">Total: 0</span>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll No</th><th>Name</th><th>Class</th><th>Phone</th><th>Custom Fee</th><th>Adm. Date</th><th>Action</th></tr></thead>
+                    <tbody id="student_list_tbody"></tbody>
+                </table>
+            </div>
+            
+            <button class="btn-danger-reset" onclick="clearSystemMemory()">⚠️ Reset All Old Test Data (App Zero Karein)</button>
+        </div>
+
+        <!-- TAB 2: DAILY ATTENDANCE -->
+        <div id="attendance" class="tab-panel">
+            <h3>Daily Attendance Tracker</h3>
+            <div class="form-group"><label>Date:</label><input type="text" id="att_date" onchange="loadAttendanceTab()"></div>
+            
+            <!-- NEW HOLIDAY SETTING CONTROL BOX -->
+            <div style="background: #fff4e5; border: 1px solid #ffe0b2; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 8px 0; color: var(--holiday-color);">🗓️ Chutti / Holiday Settings For This Date</h4>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="holiday_reason" placeholder="Chutti ki wajah likhein, e.g., Sunday, Eid, Heavy Rain">
+                    </div>
+                    <button class="action-btn" style="background: var(--holiday-color); padding: 10px;" onclick="toggleHolidayStatus()">Save Holiday Status</button>
+                    <button class="action-btn" style="background: #90a4ae; padding: 10px;" onclick="removeHolidayStatus()">Remove Holiday</button>
+                </div>
+                <div id="holiday_current_status" style="margin-top: 8px; font-weight: bold; font-size: 13px; color: #d84315;"></div>
+            </div>
+
+            <div id="attendance_interactive_area">
+                <p style="font-size: 12px; color: #555; background: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; border-radius: 4px;">
+                    💡 <b>Tip:</b> Sab bache automatic <b>Present</b> hain. Aap ne sirf un bachon ko dropdown se <b>Absent</b> karna hai jo nahi aaye!
+                </p>
+
+                <div class="filter-section">
+                    <label>Class View:</label>
+                    <select id="filter_class_att" onchange="loadAttendanceTab()"><option value="All">All Academy</option></select>
+                </div>
+
+                <button class="btn-bulk-mega" onclick="startBulkAttendanceSMS()">⚡ Send Bulk Absent SMS (Sirf Absentees ko)</button>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Roll</th><th>Name</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="attendance_tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: FEES RECORD -->
+        <div id="fees" class="tab-panel">
+            <h3>Fees Record Tracker</h3>
+            <div class="filter-section" style="background:#e2e8f0;">
+                <div style="flex:1;">
+                    <label>Select Month:</label>
+                    <select id="fee_month" onchange="loadFeesTab()">
+                        <option value="January">January</option><option value="February">February</option>
+                        <option value="March">March</option><option value="April">April</option>
+                        <option value="May">May</option><option value="June" selected>June</option>
+                        <option value="July">July</option><option value="August">August</option>
+                        <option value="September">September</option><option value="October">October</option>
+                        <option value="November">November</option><option value="December">December</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label>Select Year:</label>
+                    <select id="fee_year" onchange="loadFeesTab()"></select>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <label>Class View:</label>
+                <select id="filter_class_fee" onchange="loadFeesTab()"><option value="All">All Academy</option></select>
+            </div>
+
+            <button class="btn-bulk-mega" onclick="startBulkFeeWarningSMS()">⚡ Send Bulk Fees Reminders (Sirf Unpaid bachon ko)</button>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Assigned Fee</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="fees_tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 4: TEST MARKS -->
+        <div id="tests" class="tab-panel">
+            <h3>Subject Wise Test Marks Entry</h3>
+            <div class="form-group"><label>Test Date:</label><input type="text" id="test_date"></div>
+            <div class="form-group"><label>Subject Name:</label><input type="text" id="test_subject" value="Physics"></div>
+            <div class="form-group"><label>Total Marks:</label><input type="number" id="test_total" value="50"></div>
+            
+            <p style="font-size: 12px; color: #1b365d; background: #e0f2fe; padding: 8px; border-left: 4px solid #0284c7; border-radius: 4px;">
+                ⚠️ <b>Safe Protection Active:</b> Jin bachon ke marks aap ne blank chorde hain un ko <b>N/E (Not Entered)</b> treat kiya jayega aur koi WhatsApp galti se bhi nahi jayega. Sirf fill kiye hue number wale bacho ko SMS send hoga.
+            </p>
+
+            <div class="filter-section">
+                <label>Class View:</label>
+                <select id="filter_class_test" onchange="loadTestsTab()"><option value="All">All Academy</option></select>
+            </div>
+
+            <button class="btn-bulk-mega" onclick="startBulkTestMarksSMS()">⚡ Send Bulk Test Marks & Save to Record</button>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Obtained Marks</th><th>Action</th></tr></thead>
+                    <tbody id="tests_tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 5: REPORTS & ATTENDANCE REGISTER DESK -->
+        <div id="reports" class="tab-panel">
+            
+            <!-- SEARCH STUDENT LIFETIME HISTORY (FOR PARENTS) -->
+            <div class="report-box" style="border: 2px solid var(--primary-color); background: #f8fafc;">
+                <h3 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color);">🔍 Parents Search Desk (Generate PDF Report Card)</h3>
+                <p style="font-size: 12px; margin-top: -5px; color: #555;">Kisi bhi bache ka professional result card download karne ke liye roll number select karein:</p>
+                
+                <div class="form-group">
+                    <label style="font-weight: bold; color: var(--primary-color);">Select Student:</label>
+                    <select id="history_search_roll" onchange="generateStudentLifetimeProfile()">
+                        <option value="">-- Select Student to view complete History --</option>
+                    </select>
+                </div>
+
+                <!-- PDF Print Trigger Button -->
+                <div id="pdf_action_bar" style="display:none; text-align:right;">
+                    <button class="btn-pdf-print" onclick="window.print()">🖨️ Download Report Card (Save as PDF)</button>
+                </div>
+
+                <!-- THE STRUCTURAL PDF LAYOUT CARD AREA -->
+                <div id="printable_pdf_area" style="display:none;">
+                    <div class="pdf-report-card">
+                        <div class="pdf-header">
+                            <h2>Bright Future Science Academy</h2>
+                            <p>Official Student Progress & Performance Report Card</p>
+                        </div>
+
+                        <div class="pdf-student-info">
+                            <div class="pdf-info-item"><span class="label">Student Name:</span><span class="value" id="pdf_student_name">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Roll Number:</span><span class="value" id="pdf_roll_no">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Class Category:</span><span class="value" id="pdf_class">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Parents Contact:</span><span class="value" id="pdf_phone">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Admission Date:</span><span class="value" id="pdf_admission_date" style="color:var(--purple-color);">---</span></div>
+                        </div>
+
+                        <div class="pdf-section-title">📅 Attendance Track Record Matrix</div>
+                        <table class="pdf-table">
+                            <thead>
+                                <tr><th>Billing Cycle</th><th>Total Session Days</th><th>Days Present</th><th>Days Absent</th><th>Attendance Ratio</th></tr>
+                            </thead>
+                            <tbody id="pdf_attendance_tbody"></tbody>
+                        </table>
+
+                        <div class="pdf-section-title">💰 Monthly Accounts & Fees Clearance Statement</div>
+                        <table class="pdf-table">
+                            <thead>
+                                <tr><th>Month-Year Cycle</th><th>Assigned Fee Amount</th><th>Payment Status</th><th>Payment Verification Date & Time</th></tr>
+                            </thead>
+                            <tbody id="pdf_fees_tbody"></tbody>
+                        </table>
+
+                        <div class="pdf-section-title">📝 Subject Academic Test Performance Records</div>
+                        <table class="pdf-table">
+                            <thead>
+                                <tr><th>Test Date</th><th>Subject Topic</th><th>Total Marks</th><th>Obtained Marks</th><th>Percentage Efficiency</th></tr>
+                            </thead>
+                            <tbody id="pdf_tests_tbody"></tbody>
+                        </table>
+
+                        <div class="pdf-footer-note">
+                            * This is a computer-generated performance sheet valid for parents evaluation. Generated on: <span id="pdf_live_generation_date"></span>. Thank you for choosing excellence!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MUKAMMAL DIGITAL ATTENDANCE REGISTER VIEW -->
+            <div class="report-box" style="border: 2px solid var(--success-color); background: #ffffff; margin-top: 25px;">
+                <h3 style="color: var(--success-color); border-bottom: 2px solid var(--success-color);">📋 Monthly Attendance Register Sheet View</h3>
+                <p style="font-size: 12px; margin-top: -5px; color: #555;">Pure mahine ka attendance register aik nazar mein dekhne ke liye class aur month select karein:</p>
+                
+                <div class="filter-section" style="background:#e8f5e9;">
+                    <div style="flex:1; min-width:150px;">
+                        <label>Filter Class:</label>
+                        <select id="reg_sheet_class" onchange="generateMonthlyRegisterSheet()"><option value="All">All Academy</option></select>
+                    </div>
+                    <div style="flex:1; min-width:120px;">
+                        <label>Select Month:</label>
+                        <select id="reg_sheet_month" onchange="generateMonthlyRegisterSheet()">
+                            <option value="01">January</option><option value="02">February</option>
+                            <option value="03">March</option><option value="04">April</option>
+                            <option value="05">May</option><option value="06" selected>June</option>
+                            <option value="07">July</option><option value="08">August</option>
+                            <option value="09">September</option><option value="10">October</option>
+                            <option value="11">November</option><option value="12">December</option>
+                        </select>
+                    </div>
+                    <div style="flex:1; min-width:100px;">
+                        <label>Select Year:</label>
+                        <select id="reg_sheet_year" onchange="generateMonthlyRegisterSheet()"></select>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="register-table" id="register_sheet_table">
+                    </table>
+                </div>
+            </div>
+
+            <!-- LIVE ACADEMY LOGS -->
+            <h3 style="margin-top: 30px; border-bottom: 2px solid var(--purple-color); color: var(--purple-color);">📊 Professional Academy General Record Desk</h3>
+            
+            <div class="report-box" style="border-left: 5px solid var(--primary-color);">
+                <h4>Live Activity Lookup Dashboard</h4>
+                <div class="filter-section">
+                    <label>Select Track Date:</label>
+                    <input type="text" id="report_daily_date" placeholder="DD-MM-YYYY" onchange="checkDailyReport()">
+                    <button class="action-btn btn-pay" onclick="checkDailyReport()">Refresh Live Data Log</button>
+                </div>
+                
+                <div class="dashboard" style="margin-top:10px;">
+                    <div class="dash-card presents"><h4>Total Present Aaj</h4><p id="live_presents_count">0</p></div>
+                    <div class="dash-card absents"><h4>Total Absent Aaj</h4><p id="live_absents_count">0</p></div>
+                    <div class="dash-card collections"><h4>Today's Fee Invoices</h4><p id="live_fees_count">Rs. 0</p></div>
+                </div>
+
+                <div style="display: flex; gap:15px; flex-wrap: wrap; margin-top:15px;">
+                    <div style="flex:1; min-width:280px; background:#fff; border: 1px solid #fca5a5; padding:10px; border-radius:6px;">
+                        <h5 style="margin:0 0 10px 0; color:var(--danger-color); font-size:13px; border-bottom:1px solid #fca5a5; padding-bottom:4px;">🔴 Absent Students List</h5>
+                        <div id="live_absent_list_output" style="font-size:12px; max-height:200px; overflow-y:auto; color:#444;"></div>
+                    </div>
+                    <div style="flex:1; min-width:280px; background:#fff; border: 1px solid #bbf7d0; padding:10px; border-radius:6px;">
+                        <h5 style="margin:0 0 10px 0; color:var(--success-color); font-size:13px; border-bottom:1px solid #bbf7d0; padding-bottom:4px;">🟢 Today Fees Submitted List</h5>
+                        <div id="live_fee_list_output" style="font-size:12px; max-height:200px; overflow-y:auto; color:#444;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Audit Module -->
+            <div class="report-box">
+                <h4>Financial Year Audit Ledger</h4>
+                <div class="filter-section">
+                    <select id="report_month">
+                        <option value="All">All Months</option>
+                        <option value="January">January</option><option value="February">February</option>
+                        <option value="March">March</option><option value="April">April</option>
+                        <option value="May">May</option><option value="June">June</option>
+                        <option value="July">July</option><option value="August">August</option>
+                        <option value="September">September</option><option value="October">October</option>
+                        <option value="November">November</option><option value="December">December</option>
+                    </select>
+                    <select id="report_year"></select>
+                    <button class="action-btn btn-pay" onclick="checkFinancialReport()">Generate Financial Audit</button>
+                </div>
+                <div id="financial_report_output"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const classCategories = [
+            "Playgroup", "Nursery", "Prep", "1st Class", "2nd Class", "3rd Class", "4th Class", "5th Class", 
+            "6th Class", "7th Class", "8th Class", 
+            "9th Junior (Bio)", "9th Junior (Computer)", "9th Senior (Bio)", "9th Senior (Computer)",
+            "10th Matric (Bio)", "10th Matric (Computer)",
+            "11th (F.Sc Pre-Medical)", "11th (F.Sc Pre-Engineering)", "11th (ICS Computer)", "11th (I.Com)", "11th (F.A Arts)",
+            "12th (F.Sc Pre-Medical)", "12th (F.Sc Pre-Engineering)", "12th (ICS Computer)", "12th (I.Com)", "12th (F.A Arts)"
+        ];
+
+        let students = JSON.parse(localStorage.getItem('bfsa_students')) || [];
+        let feeStatusMap = JSON.parse(localStorage.getItem('bfsa_fees')) || {}; 
+        let feeTransactions = JSON.parse(localStorage.getItem('bfsa_transactions')) || [];
+        let dailyAttendanceLog = JSON.parse(localStorage.getItem('bfsa_attendance_logs')) || {};
+        let globalTestRecords = JSON.parse(localStorage.getItem('bfsa_test_records')) || [];
+        let academyHolidays = JSON.parse(localStorage.getItem('bfsa_holidays')) || {};
+
+        let smsQueue = [];
+        let todayDateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
+
+        function initializeDropdowns() {
+            const regSel = document.getElementById('reg_class');
+            const dropdowns = ['filter_class_reg', 'filter_class_att', 'filter_class_fee', 'filter_class_test', 'reg_sheet_class'];
+
+            if (regSel) regSel.innerHTML = '';
+            classCategories.forEach(c => {
+                if (regSel) regSel.innerHTML += `<option value="${c}">${c}</option>`;
+                dropdowns.forEach(id => {
+                    let element = document.getElementById(id);
+                    if (element) {
+                        element.innerHTML += `<option value="${c}">${c}</option>`;
+                    }
+                });
+            });
+
+            const feeYearSelect = document.getElementById('fee_year');
+            const reportYearSelect = document.getElementById('report_year');
+            const sheetYearSelect = document.getElementById('reg_sheet_year');
+            
+            if(feeYearSelect && reportYearSelect && sheetYearSelect) {
+                feeYearSelect.innerHTML = ''; reportYearSelect.innerHTML = ''; sheetYearSelect.innerHTML = '';
+                for(let y=2026; y<=2050; y++) {
+                    feeYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                    reportYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                    sheetYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                }
+            }
+
+            syncHistorySearchDropdown();
+        }
+
+        function syncHistorySearchDropdown() {
+            const searchDropdown = document.getElementById('history_search_roll');
+            if(!searchDropdown) return;
+            searchDropdown.innerHTML = '<option value="">-- Select Student to view complete History --</option>';
+            students.forEach(s => {
+                searchDropdown.innerHTML += `<option value="${s.roll}">Roll No: ${s.roll} - ${s.name} (${s.s_class})</option>`;
+            });
+        }
+
+        document.getElementById('att_date').value = todayDateStr;
+        document.getElementById('report_daily_date').value = todayDateStr;
+        document.getElementById('test_date').value = todayDateStr;
+        document.getElementById('reg_adm_date').value = todayDateStr;
+
+        function getLiveTime() {
+            return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function sendWhatsApp(phone, text) {
+            let cleanPhone = phone.replace(/[^0-9]/g, '');
+            if(cleanPhone.startsWith('03')) cleanPhone = '92' + cleanPhone.substring(1);
+            let url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(text);
+            window.open(url, '_blank');
+        }
+
+        function processNextSMSQueue() {
+            if (smsQueue.length === 0) {
+                alert("🎉 All filtered bulk messages processed successfully!");
+                return;
+            }
+            let item = smsQueue.shift();
+            if(confirm(`[Bulk Automation] Next open WhatsApp chat?\nStudent: ${item.name}\nType: ${item.type}`)) {
+                sendWhatsApp(item.phone, item.msg);
+                setTimeout(() => { processNextSMSQueue(); }, 1200);
+            } else {
+                alert("Bulk Messaging stopped.");
+                smsQueue = [];
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if(tabId === 'attendance') loadAttendanceTab();
+            if(tabId === 'fees') loadFeesTab();
+            if(tabId === 'tests') loadTestsTab();
+            if(tabId === 'reports') {
+                syncHistorySearchDropdown();
+                checkDailyReport();
+                generateMonthlyRegisterSheet();
+            }
+            updateFinancialDashboard();
+        }
+
+        function updateFinancialDashboard() {
+            let currentMonth = document.getElementById('fee_month').value;
+            let currentYear = document.getElementById('fee_year').value;
+            let monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
+
+            feeTransactions.forEach(t => {
+                lifetimeTotal += parseFloat(t.amount);
+                if(t.year == currentYear) yearlyTotal += parseFloat(t.amount);
+                if(t.month === currentMonth && t.year == currentYear) monthlyTotal += parseFloat(t.amount);
+            });
+
+            document.getElementById('dash_month').innerText = "Rs. " + monthlyTotal;
+            document.getElementById('dash_year').innerText = "Rs. " + yearlyTotal;
+            document.getElementById('dash_life').innerText = "Rs. " + lifetimeTotal;
+        }
+
+        function clearSystemMemory() {
+            if(confirm("Kya aap sach mein purana tamaam dummy/test record bilkul saaf kar ke zero karna chahte hain?")) {
+                localStorage.clear();
+                students = []; feeStatusMap = {}; feeTransactions = []; dailyAttendanceLog = {}; globalTestRecords = []; academyHolidays = {};
+                renderStudentList();
+                updateFinancialDashboard();
+                syncHistorySearchDropdown();
+                document.getElementById('printable_pdf_area').style.display = 'none';
+                document.getElementById('pdf_action_bar').style.display = 'none';
+                alert("🎉 System Reset Successful!");
+            }
+        }
+
+        function saveStudent() {
+            let roll = document.getElementById('reg_roll').value.trim();
+            let name = document.getElementById('reg_name').value.trim();
+            let s_class = document.getElementById('reg_class').value;
+            let phone = document.getElementById('reg_phone').value.trim();
+            let fee = document.getElementById('reg_fee').value.trim() || "2500";
+            let adm_date = document.getElementById('reg_adm_date').value.trim() || todayDateStr;
+
+            if(!roll || !name || !phone) { alert("Please fill all fields!"); return; }
+            if(students.some(s => s.roll === roll)) { alert("Roll Number already exists!"); return; }
+
+            students.push({ roll, name, s_class, phone, custom_fee: fee, admission_date: adm_date });
+            localStorage.setItem('bfsa_students', JSON.stringify(students));
+            
+            document.getElementById('reg_roll').value = '';
+            document.getElementById('reg_name').value = '';
+            document.getElementById('reg_phone').value = '';
+            document.getElementById('reg_adm_date').value = todayDateStr;
+
+            alert(`${name} registered successfully!`);
+            renderStudentList();
+            syncHistorySearchDropdown();
+        }
+
+        function renderStudentList() {
+            let filter = document.getElementById('filter_class_reg').value;
+            let tbody = document.getElementById('student_list_tbody');
+            tbody.innerHTML = '';
+
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            document.getElementById('class_count_display').innerText = "Total: " + filteredList.length;
+
+            filteredList.forEach((s) => {
+                let actualIndex = students.findIndex(st => st.roll === s.roll);
+                let currentCustomFee = s.custom_fee || "2500";
+                let admDate = s.admission_date || "---";
+                tbody.innerHTML += `<tr><td>${s.roll}</td><td>${s.name}</td><td><b>${s.s_class}</b></td><td>${s.phone}</td><td>Rs. ${currentCustomFee}</td><td>${admDate}</td><td><button class="action-btn btn-del" onclick="deleteStudent(${actualIndex})">خارج کریں</button></td></tr>`;
+            });
+        }
+
+        function deleteStudent(index) {
+            let studentName = students[index].name;
+            if(confirm(`Remove ${studentName} from academy?`)) {
+                students.splice(index, 1);
+                localStorage.setItem('bfsa_students', JSON.stringify(students));
+                renderStudentList();
+                syncHistorySearchDropdown();
+            }
+        }
+
+        function toggleHolidayStatus() {
+            let dateKey = document.getElementById('att_date').value;
+            let reason = document.getElementById('holiday_reason').value.trim() || "Chutti";
+            
+            academyHolidays[dateKey] = reason;
+            localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+            alert(`Date ${dateKey} marked as Holiday (${reason}) successfully!`);
+            loadAttendanceTab();
+        }
+
+        function removeHolidayStatus() {
+            let dateKey = document.getElementById('att_date').value;
+            if(academyHolidays[dateKey]) {
+                delete academyHolidays[dateKey];
+                localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+                document.getElementById('holiday_reason').value = '';
+                alert(`Holiday removed for ${dateKey}`);
+                loadAttendanceTab();
+            }
+        }
+
+        function loadAttendanceTab() {
+            let filter = document.getElementById('filter_class_att').value;
+            let tbody = document.getElementById('attendance_tbody');
+            let interactiveArea = document.getElementById('attendance_interactive_area');
+            let statusText = document.getElementById('holiday_current_status');
+            let dateKey = document.getElementById('att_date').value;
+            
+            tbody.innerHTML = '';
+
+            if(academyHolidays[dateKey]) {
+                statusText.innerText = `⚠️ Notice: This date is marked as HOLIDAY owing to: "${academyHolidays[dateKey]}"`;
+                document.getElementById('holiday_reason').value = academyHolidays[dateKey];
+                interactiveArea.style.opacity = "0.5";
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:orange; font-weight:bold;">Is Date ko Academy ki Chutti select ki hui ha. Attendance blocked.</td></tr>';
+                return;
+            } else {
+                statusText.innerText = "✅ Regular Active Day (No Holiday Marked)";
+                document.getElementById('holiday_reason').value = '';
+                interactiveArea.style.opacity = "1";
+            }
+            
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            if(filteredList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students in this view.</td></tr>'; return; }
+
+            filteredList.forEach(s => {
+                let savedStatus = (dailyAttendanceLog[dateKey] && dailyAttendanceLog[dateKey][s.roll]) || 'P';
+                if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
+                if(!dailyAttendanceLog[dateKey][s.roll]) dailyAttendanceLog[dateKey][s.roll] = 'P';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.roll}</td>
+                        <td>${s.name} <small>(${s.s_class})</small></td>
+                        <td>
+                            <select id="att_${s.roll}" onchange="saveIndividualAttendanceStatus('${s.roll}')">
+                                <option value="P" ${savedStatus === 'P' ? 'selected' : ''}>Present</option>
+                                <option value="A" ${savedStatus === 'A' ? 'selected' : ''}>Absent</option>
+                            </select>
+                        </td>
+                        <td><button class="action-btn btn-wa" onclick="sendSingleAbsentSMS('${s.roll}')">WhatsApp</button></td>
+                    </tr>`;
+            });
+            localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+        }
+
+        function saveIndividualAttendanceStatus(roll) {
+            let dateKey = document.getElementById('att_date').value;
+            if(academyHolidays[dateKey]) return; 
+            let status = document.getElementById(`att_${roll}`).value;
+            if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
+            dailyAttendanceLog[dateKey][roll] = status;
+            localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+        }
+
+        function sendSingleAbsentSMS(roll) {
+            let dateKey = document.getElementById('att_date').value;
+            if(academyHolidays[dateKey]) { alert("Chutti wale din SMS nahi bheja ja sakta."); return; }
+            saveIndividualAttendanceStatus(roll); 
+            let status = document.getElementById(`att_${roll}`).value;
+            if(status === 'P') { alert("❌ Warning: Ye bacha Present hai!"); return; }
+            let s = students.find(st => st.roll === roll);
+            
+            let msg = `محترم والدین،\n\nآپ کا بچہ *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج بتاریخ *${dateKey}* اکیڈمی سے غیر حاضر ہے۔ مہربانی فرما کر وجہ بتائیں۔\n\nمنجانب:\n*برائٹ فیوچر سائنس اکیڈمی* (Bright Future Science Academy)`;
+            sendWhatsApp(s.phone, msg);
+        }
+
+        function startBulkAttendanceSMS() {
+            let dateKey = document.getElementById('att_date').value;
+            if(academyHolidays[dateKey]) { alert("Chutti wale din bulk SMS service disabled hoti ha."); return; }
+            let filter = document.getElementById('filter_class_att').value;
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            smsQueue = []; 
+
+            filteredList.forEach(s => {
+                saveIndividualAttendanceStatus(s.roll); 
+                let statusSelect = document.getElementById(`att_${s.roll}`);
+                if(statusSelect && statusSelect.value === 'A') {
+                    let msg = `محترم والدین،\n\nآپ کا بچہ *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج بتاریخ *${dateKey}* اکیڈمی سے غیر حاضر ہے۔ مہربانی فرما کر وجہ بتائیں۔\n\nمنجانب:\n*برائٹ فیوچر سائنس اکیڈمی* (Bright Future Science Academy)`;
+                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name, type: "Absent SMS" });
+                }
+            });
+
+            if(smsQueue.length === 0) { alert("Safety Check: Filters mein koi bhi student Absent nahi hai!"); return; }
+            processNextSMSQueue();
+        }
+
+        function loadFeesTab() {
+            let month = document.getElementById('fee_month').value;
+            let year = document.getElementById('fee_year').value;
+            let filter = document.getElementById('filter_class_fee').value;
+            let tbody = document.getElementById('fees_tbody');
+            tbody.innerHTML = '';
+
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            if(filteredList.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No records available.</td></tr>'; return; }
+
+            filteredList.forEach(s => {
+                let key = `${s.roll}_${month}_${year}`;
+                let status = feeStatusMap[key] || 'Unpaid';
+                let statusColor = status === 'Paid' ? 'green' : 'red';
+                let studentFeeAmt = s.custom_fee || "2500"; 
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.roll}</td>
+                        <td>${s.name} <small>(${s.s_class})</small></td>
+                        <td><b>Rs. ${studentFeeAmt}</b></td>
+                        <td style="color:${statusColor}; font-weight:bold;">${status}</td>
+                        <td>
+                            <button class="action-btn btn-pay" onclick="markFeePaid('${s.roll}', '${month}', '${year}')">Received</button>
+                            <button class="action-btn btn-warn" onclick="sendSingleFeeWarning('${s.roll}', '${month}', '${year}')">Reminder</button>
+                        </td>
+                    </tr>`;
+            });
+            updateFinancialDashboard();
+        }
+
+        function markFeePaid(roll, month, year) {
+            let key = `${roll}_${month}_${year}`;
+            if(feeStatusMap[key] === 'Paid') { alert("Ye fees pehle se hi Paid status par hai!"); return; }
+            
+            let s = students.find(st => st.roll === roll);
+            let studentFeeAmt = s.custom_fee || "2500"; 
+            let liveTime = getLiveTime();
+
+            feeStatusMap[key] = 'Paid';
+            localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
+            
+            feeTransactions.push({ roll: roll, month: month, year: year, amount: studentFeeAmt, dateAdded: todayDateStr, timeAdded: liveTime });
+            localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
+
+            let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کی ماہانہ فیس بابت مہینہ ${month}-${year} رقم مبلغ ${studentFeeAmt} روپے موصول ہو چکی ہے۔ شکریہ!`;
+            sendWhatsApp(s.phone, msg);
+            loadFeesTab();
+        }
+
+        function sendSingleFeeWarning(roll, month, year) {
+            let key = `${roll}_${month}_${year}`;
+            if(feeStatusMap[key] === 'Paid') { alert("Fees pehle hi jama ho chuki hai."); return; }
+            let s = students.find(st => st.roll === roll);
+            let studentFeeAmt = s.custom_fee || "2500";
+            
+            let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کی فیس برائے مہینہ (${month}-${year}) واجب الادا رقم مبلغ ${studentFeeAmt} روپے ہے۔ گزارش ہے کہ آخری تاریخ "18-${month}-${year}" سے پہلے لازمی فیس جمع کروائیں تا کہ لیٹ فائن (Fine) سے بچا جا سکے۔ شکریہ!`;
+            sendWhatsApp(s.phone, msg);
+        }
+
+        function startBulkFeeWarningSMS() {
+            let month = document.getElementById('fee_month').value;
+            let year = document.getElementById('fee_year').value;
+            let filter = document.getElementById('filter_class_fee').value;
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            smsQueue = [];
+
+            filteredList.forEach(s => {
+                let key = `${s.roll}_${month}_${year}`;
+                let status = feeStatusMap[key] || 'Unpaid';
+                let studentFeeAmt = s.custom_fee || "2500";
+                if(status === 'Unpaid') {
+                    let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کی فیس برائے مہینہ (${month}-${year}) واجب الادا رقم مبلغ ${studentFeeAmt} روپے ہے۔ گزارش ہے کہ آخری تاریخ "18-${month}-${year}" سے پہلے لازمی فیس جمع کروائیں تا کہ لیٹ فائن (Fine) سے بچا جا سکے۔ شکریہ!`;
+                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name, type: "Fee Unpaid" });
+                }
+            });
+            if(smsQueue.length === 0) { alert("Sab bachon ki fees already Paid hai."); return; }
+            processNextSMSQueue();
+        }
+
+        function loadTestsTab() {
+            let filter = document.getElementById('filter_class_test').value;
+            let tbody = document.getElementById('tests_tbody');
+            tbody.innerHTML = '';
+            
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            if(filteredList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students.</td></tr>'; return; }
+
+            filteredList.forEach(s => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.roll}</td>
+                        <td>${s.name} <small>(${s.s_class})</small></td>
+                        <td><input type="number" id="marks_${s.roll}" placeholder="N/E" style="width:70px; text-align:center;"></td>
+                        <td><button class="action-btn btn-wa" onclick="sendSingleTestMarkSMS('${s.roll}')">WhatsApp & Save</button></td>
+                    </tr>`;
+            });
+        }
+
+        function saveTestRecordDirectly(roll, subject, total, obt) {
+            let tDate = document.getElementById('test_date').value.trim();
+            globalTestRecords = globalTestRecords.filter(r => !(r.roll === roll && r.subject === subject && r.date === tDate));
+            globalTestRecords.push({ roll: roll, date: tDate, subject: subject, total: parseInt(total), obtained: parseInt(obt) });
+            localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+        }
+
+        function sendSingleTestMarkSMS(roll) {
+            let s = students.find(st => st.roll === roll);
+            let subject = document.getElementById('test_subject').value.trim();
+            let total = document.getElementById('test_total').value.trim();
+            let marksInput = document.getElementById(`marks_${roll}`);
+            let obt = marksInput.value.trim();
+
+            if(obt === "") { 
+                alert(`❌ Error: Roll ${roll} (${s.name}) ke marks khali hain!`); 
+                return; 
+            }
+
+            if(!subject || !total) { alert("Subject name aur total marks lazmi likhein!"); return; }
+            saveTestRecordDirectly(roll, subject, total, obt);
+            let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کا مضمون (${subject}) کا ٹیسٹ رزلٹ آ گیا ہے۔ کل نمبر: ${total}، حاصل کردہ نمبر: ${obt}۔ شکریہ!`;
+            sendWhatsApp(s.phone, msg);
+        }
+
+        function startBulkTestMarksSMS() {
+            let filter = document.getElementById('filter_class_test').value;
+            let subject = document.getElementById('test_subject').value.trim();
+            let total = document.getElementById('test_total').value.trim();
+            if(!subject || !total) { alert("Subject and Total fields required!"); return; }
+
+            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
+            smsQueue = [];
+
+            filteredList.forEach(s => {
+                let marksInput = document.getElementById(`marks_${s.roll}`);
+                let obt = marksInput ? marksInput.value.trim() : "";
+                
+                if (obt !== "") {
+                    saveTestRecordDirectly(s.roll, subject, total, obt);
+                    let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کا مضمون (${subject}) ٹیسٹ مارکس: ${obt}/${total}۔ شکریہ!`;
+                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name, type: "Test Marks" });
+                }
+            });
+
+            if(smsQueue.length === 0) { 
+                alert("Safety System Check: List mein kisi bhi student ke marks fill nahi kiye gaye thay!"); 
+                return; 
+            }
+            processNextSMSQueue();
+        }
+
+        function generateStudentLifetimeProfile() {
+            let roll = document.getElementById('history_search_roll').value;
+            let pdfArea = document.getElementById('printable_pdf_area');
+            let actionBtn = document.getElementById('pdf_action_bar');
+            
+            if(!roll) {
+                pdfArea.style.display = 'none';
+                actionBtn.style.display = 'none';
+                return;
+            }
+
+            let s = students.find(st => st.roll === roll);
+            if(!s) { alert("Student details missing!"); return; }
+
+            pdfArea.style.display = 'block';
+            actionBtn.style.display = 'block';
+
+            document.getElementById('pdf_student_name').innerText = s.name;
+            document.getElementById('pdf_roll_no').innerText = s.roll;
+            document.getElementById('pdf_class').innerText = s.s_class;
+            document.getElementById('pdf_phone').innerText = s.phone;
+            document.getElementById('pdf_admission_date').innerText = s.admission_date || "---";
+            document.getElementById('pdf_live_generation_date').innerText = todayDateStr + " " + getLiveTime();
+
+            let attTbody = document.getElementById('pdf_attendance_tbody');
+            attTbody.innerHTML = '';
+            let monthlyAttStats = {}; 
+            
+            Object.keys(dailyAttendanceLog).forEach(dateKey => {
+                if(academyHolidays[dateKey]) return;
+
+                let parts = dateKey.split('-');
+                if(parts.length === 3) {
+                    let monthYear = parts[1] + "-" + parts[2]; 
+                    if(dailyAttendanceLog[dateKey][roll]) {
+                        let status = dailyAttendanceLog[dateKey][roll];
+                        if(!monthlyAttStats[monthYear]) monthlyAttStats[monthYear] = { P: 0, A: 0 };
+                        if(status === 'P') monthlyAttStats[monthYear].P++;
+                        if(status === 'A') monthlyAttStats[monthYear].A++;
+                    }
+                }
+            });
+
+            let attKeys = Object.keys(monthlyAttStats);
+            if(attKeys.length === 0) {
+                attTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No attendance logged yet.</td></tr>";
+            } else {
+                attKeys.forEach(my => {
+                    let p = monthlyAttStats[my].P;
+                    let a = monthlyAttStats[my].A;
+                    let total = p + a;
+                    let percentage = total > 0 ? ((p / total) * 100).toFixed(0) : 0;
+                    attTbody.innerHTML += `
+                        <tr>
+                            <td><b>Cycle Session [${my}]</b></td>
+                            <td>${total} Days</td>
+                            <td style="color:green; font-weight:bold;">${p} Days</td>
+                            <td style="color:red; font-weight:bold;">${a} Days</td>
+                            <td><mark style="background:#d1e7dd; padding:2px 5px; border-radius:3px; font-weight:bold;">${percentage}% Haziri</mark></td>
+                        </tr>`;
+                });
+            }
+
+            let feesTbody = document.getElementById('pdf_fees_tbody');
+            feesTbody.innerHTML = '';
+            let billingMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let feeRowsCount = 0;
+            let studentFeeAmt = s.custom_fee || "2500";
+
+            billingMonths.forEach(m => {
+                for(let y=2026; y<=2050; y++) {
+                    let key = `${roll}_${m}_${y}`;
+                    if(feeStatusMap[key]) {
+                        feeRowsCount++;
+                        let status = feeStatusMap[key];
+                        let txInfo = feeTransactions.find(t => t.roll === roll && t.month === m && t.year == y);
+                        let timestampStr = txInfo ? `${txInfo.dateAdded} (${txInfo.timeAdded || ''})` : '---';
+                        let statusStyle = status === 'Paid' ? 'color:green; font-weight:bold;' : 'color:red; font-weight:bold;';
+                        
+                        feesTbody.innerHTML += `
+                            <tr>
+                                <td>${m} ${y}</td>
+                                <td>Rs. ${studentFeeAmt}</td>
+                                <td style="${statusStyle}">${status.toUpperCase()}</td>
+                                <td><small>${timestampStr}</small></td>
+                            </tr>`;
+                    }
+                }
+            });
+
+            if(feeRowsCount === 0) { feesTbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color:gray;'>No fee invoice found.</td></tr>"; }
+
+            let testTbody = document.getElementById('pdf_tests_tbody');
+            testTbody.innerHTML = '';
+            let sTests = globalTestRecords.filter(t => t.roll === roll);
+            
+            if(sTests.length === 0) {
+                testTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No academic tests records verified yet.</td></tr>";
+            } else {
+                sTests.sort((a,b) => b.date.localeCompare(a.date));
+                sTests.forEach(t => {
+                    let perc = t.total > 0 ? ((t.obtained / t.total) * 100).toFixed(0) : 0;
+                    let passStyle = perc >= 40 ? "background:#d1e7dd; color:green;" : "background:#f8d7da; color:red;";
+                    testTbody.innerHTML += `
+                        <tr>
+                            <td>${t.date}</td>
+                            <td><b>${t.subject}</b></td>
+                            <td>${t.total}</td>
+                            <td><b>${t.obtained}</b></td>
+                            <td style="${passStyle} font-weight:bold; text-align:center;">${perc}%</td>
+                        </tr>`;
+                });
+            }
+        }
+
+        function generateMonthlyRegisterSheet() {
+            let selectedClass = document.getElementById('reg_sheet_class').value;
+            let month = document.getElementById('reg_sheet_month').value; 
+            let year = document.getElementById('reg_sheet_year').value; 
+            let table = document.getElementById('register_sheet_table');
+            
+            table.innerHTML = '';
+
+            let filteredStudents = selectedClass === 'All' ? students : students.filter(s => s.s_class === selectedClass);
+            if(filteredStudents.length === 0) {
+                table.innerHTML = "<tr><td style='color:red; padding:10px;'>Is Filter Class mein koi student data mojood nahi ha.</td></tr>";
+                return;
+            }
+
+            let daysInMonth = new Date(year, parseInt(month), 0).getDate();
+
+            let headerHtml = `<tr><th>Roll</th><th>Student Name</th><th>Class</th>`;
+            for(let d = 1; d <= daysInMonth; d++) {
+                headerHtml += `<th>${d}</th>`;
+            }
+            headerHtml += `</tr>`;
+            table.innerHTML += headerHtml;
+
+            filteredStudents.forEach(s => {
+                let rowHtml = `<tr><td><b>${s.roll}</b></td><td><b>${s.name}</b></td><td><small>${s.s_class}</small></td>`;
+                
+                for(let d = 1; d <= daysInMonth; d++) {
+                    let dayStr = d < 10 ? '0' + d : d;
+                    let checkDateKey = `${dayStr}-${month}-${year}`;
+                    
+                    if(academyHolidays[checkDateKey]) {
+                        let reasonText = academyHolidays[checkDateKey];
+                        rowHtml += `<td class="h-cell" title="${reasonText}">${reasonText}</td>`;
+                    } else {
+                        let dayStatus = 'empty';
+                        if(dailyAttendanceLog[checkDateKey] && dailyAttendanceLog[checkDateKey][s.roll]) {
+                            dayStatus = dailyAttendanceLog[checkDateKey][s.roll];
+                        }
+
+                        if(dayStatus === 'P') {
+                            rowHtml += `<td class="p-cell">P</td>`;
+                        } else if(dayStatus === 'A') {
+                            rowHtml += `<td class="a-cell">A</td>`;
+                        } else {
+                            rowHtml += `<td class="empty-cell">-</td>`;
+                        }
+                    }
+                }
+                rowHtml += `</tr>`;
+                table.innerHTML += rowHtml;
+            });
+        }
+
+        function checkDailyReport() {
+            let targetDate = document.getElementById('report_daily_date').value.trim();
+            let presentsCountElement = document.getElementById('live_presents_count');
+            let absentsCountElement = document.getElementById('live_absents_count');
+            let feesCountElement = document.getElementById('live_fees_count');
+            let absentListOutput = document.getElementById('live_absent_list_output');
+            let feeListOutput = document.getElementById('live_fee_list_output');
+
+            if(academyHolidays[targetDate]) {
+                presentsCountElement.innerText = "Chutti";
+                absentsCountElement.innerText = "Chutti";
+                feesCountElement.innerText = "Rs. 0";
+                absentListOutput.innerHTML = `<p style="color:orange; margin:0;">🗓️ Aaj Academy Holiday ha: <b>"${academyHolidays[targetDate]}"</b></p>`;
+                feeListOutput.innerHTML = '<p style="color:#666; margin:0;">Aaj koi fees submit nahi hui.</p>';
+                return;
+            }
+
+            let attendanceLogInstance = dailyAttendanceLog[targetDate] || {};
+            let presentsCount = 0; let absentsCount = 0;
+            let absentHtml = '<ol style="padding-left:20px; margin:0;">';
+            
+            students.forEach(s => {
+                let status = attendanceLogInstance[s.roll] || 'P'; 
+                if(status === 'P') { presentsCount++; } 
+                else if(status === 'A') {
+                    absentsCount++;
+                    absentHtml += `<li style="margin-bottom:4px;"><b>Roll ${s.roll}</b> - ${s.name} <span class="class-count-badge" style="background:#dc3545;">${s.s_class}</span></li>`;
+                }
+            });
+            absentHtml += '</ol>';
+            if(absentsCount === 0) absentHtml = '<p style="color:green; margin:0;">🌟 Sab bache present hain aaj!</p>';
+
+            let todayFeesCount = 0;
+            let totalAmountCollectedToday = 0;
+            let feeHtml = '<ul style="padding-left:15px; margin:0; list-style-type:square;">';
+            
+            feeTransactions.forEach(t => {
+                if(t.dateAdded === targetDate) {
+                    todayFeesCount++;
+                    totalAmountCollectedToday += parseFloat(t.amount);
+                    let s = students.find(x => x.roll === t.roll) || { name: 'Unknown Student', s_class: 'N/A' };
+                    feeHtml += `<li style="margin-bottom:4px;"><b>Roll ${t.roll}</b>. ${s.name} (${t.month}) - <span style="color:green; font-weight:bold;">Rs. ${t.amount}</span></li>`;
+                }
+            });
+            feeHtml += '</ul>';
+            if(todayFeesCount === 0) feeHtml = '<p style="color:#666; margin:0;">Aaj koi fees submit nahi hui.</p>';
+
+            presentsCountElement.innerText = presentsCount;
+            absentsCountElement.innerText = absentsCount;
+            feesCountElement.innerText = "Rs. " + totalAmountCollectedToday;
+            
+            absentListOutput.innerHTML = absentHtml;
+            feeListOutput.innerHTML = feeHtml;
+        }
+
+        function checkFinancialReport() {
+            let m = document.getElementById('report_month').value;
+            let y = document.getElementById('report_year').value;
+            let div = document.getElementById('financial_report_output');
+            let totalAmountCollected = 0; let countTransactions = 0; let rowsHtml = '';
+
+            feeTransactions.forEach(t => {
+                let match = false;
+                if(m === 'All' && t.year == y) match = true;
+                if(t.month === m && t.year == y) match = true;
+                if(match) {
+                    let s = students.find(x => x.roll === t.roll) || { name: 'Unknown Student', s_class: 'N/A' };
+                    totalAmountCollected += parseFloat(t.amount); countTransactions++;
+                    rowsHtml += `<tr><td>${t.roll}</td><td>${s.name}</td><td>${s.s_class}</td><td>${t.month}-${t.year}</td><td>Rs. ${t.amount}</td><td>${t.dateAdded}</td></tr>`;
+                }
+            });
+
+            if(countTransactions === 0) {
+                div.innerHTML = `<p style="color:red; margin-top:10px;">Koi transaction record nahi mila.</p>`;
+                return;
+            }
+            div.innerHTML = `
+                <div style="margin-top:15px; padding:10px; background:#f0fdf4; border:1px solid #bbf7d0;">
+                    <p style="font-size:16px; margin:0;"><b>Total Revenue Collected:</b> <span style="color:green; font-weight:bold;">Rs. ${totalAmountCollected}</span> (Invoices: ${countTransactions})</p>
+                </div>
+                <div class="table-responsive"><table><thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Cycle</th><th>Amount</th><th>Date</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+        }
+
+        // ================= ANTI-DELETE BACKUP STORAGE SYSTEM CODE =================
+        function exportAcademyBackupFile() {
+            if(students.length === 0 && feeTransactions.length === 0) {
+                alert("❌ Backup banane ke liye koi data mojood nahi hai!");
+                return;
+            }
+            
+            let backupMasterObject = {
+                students: students,
+                fees: feeStatusMap,
+                transactions: feeTransactions,
+                attendance: dailyAttendanceLog,
+                tests: globalTestRecords,
+                holidays: academyHolidays
+            };
+
+            let jsonString = JSON.stringify(backupMasterObject, null, 2);
+            let blob = new Blob([jsonString], { type: "text/plain;charset=utf-8" });
+            let downloadLink = document.createElement("a");
+            
+            let formattedFileDate = todayDateStr.replace(/-/g, '_');
+            downloadLink.download = `bfsa_backup_${formattedFileDate}.txt`;
+            downloadLink.href = window.URL.createObjectURL(blob);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            alert("📥 Backup Successfully Downloaded!\nYeh file aap ke mobile ke 'Downloads' folder mein save ho gayi hai. Is file ko hifazat se rakhein.");
+        }
+
+        function importAcademyBackupFile(inputElement) {
+            let file = inputElement.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let parsedData = JSON.parse(e.target.result);
+                    
+                    if (parsedData.students) {
+                        students = parsedData.students || [];
+                        feeStatusMap = parsedData.fees || {};
+                        feeTransactions = parsedData.transactions || [];
+                        dailyAttendanceLog = parsedData.attendance || {};
+                        globalTestRecords = parsedData.tests || [];
+                        academyHolidays = parsedData.holidays || {};
+
+                        localStorage.setItem('bfsa_students', JSON.stringify(students));
+                        localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
+                        localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
+                        localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+                        localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+                        localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+
+                        alert("📤 Progress Data Restored! Aap ka sara purana records kamyabi se wapas aa gaya hai!");
+                        
+                        // Interface Refresh
+                        renderStudentList();
+                        updateFinancialDashboard();
+                        syncHistorySearchDropdown();
+                        loadAttendanceTab();
+                    } else {
+                        alert("❌ Galti: Yeh valid Academy Backup file nahi hai!");
+                    }
+                } catch (err) {
+                    alert("❌ Galti: File parhne mein masla hua hai. Khwabon mein bhi is file ke andar ke text ko khud se edit mat kijiyega.");
+                }
+            };
+            reader.readAsText(file);
+            inputElement.value = ''; // Reset input selection
+        }
+
+        initializeDropdowns();
+        renderStudentList();
+        updateFinancialDashboard();
+    </script>
+</body>
+</html>
