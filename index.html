@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bright Future Science Academy - Multi-Teacher System</title>
+    <title>Bright Future Science Academy</title>
     <style>
         :root {
             --primary-color: #1B365D;
@@ -622,7 +622,7 @@
 
         <div class="container">
             
-            <!-- ONLINE USERS INDICATOR -->
+            <!-- ONLINE USERS -->
             <div id="online_users_section" style="display:none; background:#e8f5e9; padding:10px; border-radius:8px; margin-bottom:15px;">
                 <h4 style="margin:0 0 8px 0; color:#2e7d32;">🟢 Online Teachers</h4>
                 <div id="online_users_list" class="online-users">
@@ -634,8 +634,8 @@
             <div class="backup-vault-box">
                 <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Data Security Vault (Auto-Save + Backup)</h4>
                 <p style="margin:5px 0 0 0; font-size:12px; color:#555;">
-                    ⚡ <strong>Auto-Save:</strong> Har entry automatic save hoti hai | 
-                    📥 <strong>Backup:</strong> Rozana backup download karein
+                    ⚡ <strong>Auto-Save:</strong> Every entry is automatically saved | 
+                    📥 <strong>Backup:</strong> Download daily backup
                 </p>
                 <div class="backup-btn-group">
                     <button class="btn-backup-export" onclick="exportAcademyBackupFile()">📥 Download Full Backup</button>
@@ -856,7 +856,7 @@
                 </div>
             </div>
 
-            <!-- ADMIN TAB (NEW) -->
+            <!-- ADMIN TAB -->
             <div id="admin" class="tab-panel">
                 <h3>⚙️ Admin Control Panel</h3>
                 
@@ -1002,20 +1002,16 @@
             submitBtn.disabled = true;
             submitBtn.textContent = "⏳ Please wait...";
 
-            // Check local users first (faster)
             if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
                 currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
                 document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
                 setLoginMessage("✅ Login Successful!", "success");
                 showToast("✅ Welcome " + currentActiveTeacher, "success");
-                
-                // Try cloud sync in background
                 tryCloudSync();
                 unlockWebsiteMainDashboard();
                 return;
             }
 
-            // If not in local, try Google Sheets
             fetch(GOOGLE_SHEET_WEB_APP_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1034,14 +1030,22 @@
                     showToast("✅ Welcome " + currentActiveTeacher, "success");
                     unlockWebsiteMainDashboard();
                 } else {
-                    setLoginMessage("❌ Invalid credentials!", "error");
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "🔓 Unlock Portal & Sync";
-                    showToast("❌ Invalid username or password!", "error");
+                    if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
+                        currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
+                        document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
+                        setLoginMessage("✅ Offline Login Successful!", "success");
+                        showToast("✅ Welcome " + currentActiveTeacher + " (Offline)", "success");
+                        isOfflineMode = true;
+                        unlockWebsiteMainDashboard();
+                    } else {
+                        setLoginMessage("❌ Invalid credentials!", "error");
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "🔓 Unlock Portal & Sync";
+                        showToast("❌ Login failed!", "error");
+                    }
                 }
             })
             .catch(err => {
-                // If cloud fails, try local one more time
                 if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
                     currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
                     document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
@@ -1050,7 +1054,7 @@
                     isOfflineMode = true;
                     unlockWebsiteMainDashboard();
                 } else {
-                    setLoginMessage("❌ Login failed. Check credentials or network.", "error");
+                    setLoginMessage("❌ Login failed. Check network!", "error");
                     submitBtn.disabled = false;
                     submitBtn.textContent = "🔓 Unlock Portal & Sync";
                     showToast("❌ Login failed!", "error");
@@ -1097,7 +1101,6 @@
             document.getElementById('test_date').value = todayDateStr;
             document.getElementById('reg_adm_date').value = todayDateStr;
             
-            // Show online users section
             document.getElementById('online_users_section').style.display = 'block';
             updateOnlineUsers();
             
@@ -1191,15 +1194,15 @@
                 localStorage.setItem('bfsa_google_sheet_url', sheetUrl);
             }
             
-            // Update header
-            document.querySelector('.header').childNodes[0].textContent = schoolName || 'Bright Future Science Academy';
+            const header = document.querySelector('.header');
+            if (header) {
+                header.childNodes[0].textContent = schoolName || 'Bright Future Science Academy';
+            }
             
             showToast("✅ Settings saved successfully!", "success");
         }
 
         function updateOnlineUsers() {
-            // In a real implementation, this would use WebSockets or Firebase
-            // For now, show all users who have logged in
             const container = document.getElementById('online_users_list');
             const adminContainer = document.getElementById('admin_online_users');
             
@@ -1557,7 +1560,7 @@
             syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, status: status });
         }
 
-        // ================= WHATSAPP FUNCTIONS =================
+        // ================= WHATSAPP FUNCTIONS (URDU + ENGLISH) =================
         function sendWhatsApp(phone, text) {
             let cleanPhone = phone.replace(/[^0-9]/g, '');
             if(cleanPhone.startsWith('03')) cleanPhone = '92' + cleanPhone.substring(1);
@@ -1581,6 +1584,7 @@
             }
         }
 
+        // ================= SINGLE ABSENT SMS (URDU + ENGLISH) =================
         function sendSingleAbsentSMS(roll) {
             let dateKey = document.getElementById('att_date').value;
             if(academyHolidays[dateKey]) { 
@@ -1596,11 +1600,31 @@
             let s = students.find(st => st.roll === roll);
             if(!s) { showToast("⚠️ Student not found!", "error"); return; }
             
-            let msg = `Dear Parent,\n\nYour child *${s.name}* (Roll: ${s.roll}) is *ABSENT* today (${dateKey}).\n\nPlease inform the reason.\n\nRegards,\nBright Future Science Academy`;
+            let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج مورخہ *${dateKey}* کو اکیڈمی میں **غیر حاضر** ہیں۔
+
+برائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+This is to inform you that your child *${s.name}* (Roll No: ${s.roll}, Class: ${s.s_class}) is **ABSENT** from academy today *${dateKey}*.
+
+Please inform the reason for absence.
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+            
             sendWhatsApp(s.phone, msg);
             showToast(`✅ SMS sent to ${s.name}`, "success");
         }
 
+        // ================= BULK ABSENT SMS (URDU + ENGLISH) =================
         function startBulkAttendanceSMS() {
             let dateKey = document.getElementById('att_date').value;
             if(academyHolidays[dateKey]) { 
@@ -1615,7 +1639,26 @@
                 saveIndividualAttendanceStatus(s.roll); 
                 let statusSelect = document.getElementById(`att_${s.roll}`);
                 if(statusSelect && statusSelect.value === 'A') {
-                    let msg = `Dear Parent,\n\nYour child *${s.name}* (Roll: ${s.roll}) is *ABSENT* today (${dateKey}).\n\nPlease inform the reason.\n\nRegards,\nBright Future Science Academy`;
+                    let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج مورخہ *${dateKey}* کو اکیڈمی میں **غیر حاضر** ہیں۔
+
+برائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+This is to inform you that your child *${s.name}* (Roll No: ${s.roll}, Class: ${s.s_class}) is **ABSENT** from academy today *${dateKey}*.
+
+Please inform the reason for absence.
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+                    
                     smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
                 }
             });
@@ -1646,6 +1689,7 @@
                 let key = `${s.roll}_${month}_${year}`;
                 let status = feeStatusMap[key] || 'Unpaid';
                 let statusColor = status === 'Paid' ? 'green' : 'red';
+                let statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
                 let studentFeeAmt = s.custom_fee || "2500"; 
 
                 tbody.innerHTML += `
@@ -1653,9 +1697,9 @@
                         <td>${s.roll}</td>
                         <td>${s.name} <small>(${s.s_class})</small></td>
                         <td><b>Rs. ${studentFeeAmt}</b></td>
-                        <td style="color:${statusColor}; font-weight:bold;">${status}</td>
+                        <td style="color:${statusColor}; font-weight:bold;">${statusText}</td>
                         <td>
-                            <button class="action-btn btn-pay" onclick="markFeePaid('${s.roll}', '${month}', '${year}')">✅ Paid</button>
+                            <button class="action-btn btn-pay" onclick="markFeePaid('${s.roll}', '${month}', '${year}')">✅ Received</button>
                             <button class="action-btn btn-warn" onclick="sendSingleFeeWarning('${s.roll}', '${month}', '${year}')">📱 Remind</button>
                         </td>
                     </tr>`;
@@ -1663,6 +1707,7 @@
             updateFinancialDashboard();
         }
 
+        // ================= MARK FEE PAID (URDU + ENGLISH) =================
         function markFeePaid(roll, month, year) {
             let key = `${roll}_${month}_${year}`;
             if(feeStatusMap[key] === 'Paid') { 
@@ -1684,32 +1729,81 @@
             feeStatusMap[key] = 'Paid';
             localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
             
-            let transactionObj = { roll: roll, month: month, year: year, amount: studentFeeAmt, dateAdded: todayDateStr, timeAdded: liveTime };
+            let transactionObj = { 
+                roll: roll, 
+                month: month, 
+                year: year, 
+                amount: studentFeeAmt, 
+                dateAdded: todayDateStr, 
+                timeAdded: liveTime 
+            };
             feeTransactions.push(transactionObj);
             localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
 
-            let msg = `Dear Parent,\n\nFee of Rs. ${studentFeeAmt} for ${s.name} (${month}-${year}) has been received.\n\nThank you!\nBright Future Science Academy`;
+            let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* موصول ہو چکی ہے۔
+
+آپ کا شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* has been received.
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+            
             sendWhatsApp(s.phone, msg);
             loadFeesTab();
             showToast(`✅ Fee collected from ${s.name}`, "success");
-            syncDataToGoogleSheet("COLLECT_FEE", { roll, name: s.name, month, year, amount: studentFeeAmt });
+            syncDataToGoogleSheet("COLLECT_FEE", { 
+                roll, 
+                name: s.name, 
+                month, 
+                year, 
+                amount: studentFeeAmt 
+            });
         }
 
+        // ================= SINGLE FEE REMINDER (URDU + ENGLISH) =================
         function sendSingleFeeWarning(roll, month, year) {
             let key = `${roll}_${month}_${year}`;
             if(feeStatusMap[key] === 'Paid') { 
-                showToast("⚠️ Fee already paid.", "warning");
+                showToast("⚠️ Fee already paid!", "warning");
                 return; 
             }
             let s = students.find(st => st.roll === roll);
             if(!s) { showToast("⚠️ Student not found!", "error"); return; }
             
             let studentFeeAmt = s.custom_fee || "2500";
-            let msg = `Dear Parent,\n\nFee of Rs. ${studentFeeAmt} for ${s.name} (${month}-${year}) is pending.\n\nPlease submit before 18-${month}-${year} to avoid late fee.\n\nRegards,\nBright Future Science Academy`;
+            let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* **واجب الادا** ہے۔
+
+برائے مہربانی تاریخ *18-${month}-${year}* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* is **PENDING**.
+
+Please submit the fee before *18-${month}-${year}* to avoid **late fee** charges.
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+            
             sendWhatsApp(s.phone, msg);
             showToast(`✅ Reminder sent to ${s.name}`, "success");
         }
 
+        // ================= BULK FEE REMINDER (URDU + ENGLISH) =================
         function startBulkFeeWarningSMS() {
             let month = document.getElementById('fee_month').value;
             let year = document.getElementById('fee_year').value;
@@ -1722,10 +1816,30 @@
                 let status = feeStatusMap[key] || 'Unpaid';
                 let studentFeeAmt = s.custom_fee || "2500";
                 if(status === 'Unpaid') {
-                    let msg = `Dear Parent,\n\nFee of Rs. ${studentFeeAmt} for ${s.name} (${month}-${year}) is pending.\n\nPlease submit before 18-${month}-${year}.\n\nRegards,\nBright Future Science Academy`;
+                    let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* **واجب الادا** ہے۔
+
+برائے مہربانی تاریخ *18-${month}-${year}* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* is **PENDING**.
+
+Please submit the fee before *18-${month}-${year}* to avoid **late fee** charges.
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+                    
                     smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
                 }
             });
+            
             if(smsQueue.length === 0) { 
                 showToast("⚠️ All fees are paid!", "warning");
                 return; 
@@ -1769,6 +1883,7 @@
             syncDataToGoogleSheet("SAVE_TEST_MARK", { date: tDate, roll, name: s.name, subject, total, obtained: obt });
         }
 
+        // ================= SINGLE TEST MARK SMS (URDU + ENGLISH) =================
         function sendSingleTestMarkSMS(roll) {
             let s = students.find(st => st.roll === roll);
             if(!s) { showToast("⚠️ Student not found!", "error"); return; }
@@ -1789,17 +1904,45 @@
             }
             
             saveTestRecordDirectly(roll, subject, total, obt);
-            let msg = `Dear Parent,\n\nTest result for ${s.name}:\nSubject: ${subject}\nMarks: ${obt}/${total}\n\nRegards,\nBright Future Science Academy`;
+            
+            let perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
+            let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کا مضمون *${subject}* کا ٹیسٹ رزلٹ آ گیا ہے۔
+
+📝 کل نمبر: ${total}
+✅ حاصل کردہ نمبر: ${obt}
+📊 فیصد: ${perc}%
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+Test result for your child *${s.name}* (Roll No: ${s.roll}) is now available.
+
+📝 Subject: ${subject}
+✅ Total Marks: ${total}
+✅ Obtained Marks: ${obt}
+📊 Percentage: ${perc}%
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+            
             sendWhatsApp(s.phone, msg);
             showToast(`✅ Test marks sent to ${s.name}`, "success");
         }
 
+        // ================= BULK TEST MARKS SMS (URDU + ENGLISH) =================
         function startBulkTestMarksSMS() {
             let filter = document.getElementById('filter_class_test').value;
             let subject = document.getElementById('test_subject').value.trim();
             let total = document.getElementById('test_total').value.trim();
+            
             if(!subject || !total) { 
-                showToast("⚠️ Subject and Total required!", "error");
+                showToast("⚠️ Subject and Total marks required!", "error");
                 return; 
             }
 
@@ -1812,7 +1955,33 @@
                 
                 if (obt !== "") {
                     saveTestRecordDirectly(s.roll, subject, total, obt);
-                    let msg = `Dear Parent,\n\nTest result for ${s.name}:\nSubject: ${subject}\nMarks: ${obt}/${total}\n\nRegards,\nBright Future Science Academy`;
+                    
+                    let perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
+                    let msg = `السلام علیکم! محترم والدین صاحب،
+
+برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کا مضمون *${subject}* کا ٹیسٹ رزلٹ آ گیا ہے۔
+
+📝 کل نمبر: ${total}
+✅ حاصل کردہ نمبر: ${obt}
+📊 فیصد: ${perc}%
+
+شکریہ!
+برائٹ فیوچر سائنس اکیڈمی
+
+---
+Dear Parent,
+
+Test result for your child *${s.name}* (Roll No: ${s.roll}) is now available.
+
+📝 Subject: ${subject}
+✅ Total Marks: ${total}
+✅ Obtained Marks: ${obt}
+📊 Percentage: ${perc}%
+
+Thank you!
+Bright Future Science Academy
+📞 0300-1234567`;
+                    
                     smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
                 }
             });
@@ -1955,11 +2124,12 @@
                         let status = feeStatusMap[key];
                         let txInfo = feeTransactions.find(t => t.roll === roll && t.month === m && t.year == y);
                         let timestampStr = txInfo ? `${txInfo.dateAdded} (${txInfo.timeAdded || ''})` : '---';
+                        let statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
                         feesTbody.innerHTML += `
                             <tr>
                                 <td>${m} ${y}</td>
                                 <td>Rs. ${studentFeeAmt}</td>
-                                <td style="color:${status === 'Paid' ? 'green' : 'red'}; font-weight:bold;">${status}</td>
+                                <td style="color:${status === 'Paid' ? 'green' : 'red'}; font-weight:bold;">${statusText}</td>
                                 <td>${timestampStr}</td>
                             </tr>`;
                     }
@@ -2111,7 +2281,6 @@
                         academyHolidays = parsedData.holidays || {};
                         if (parsedData.users) systemUsers = parsedData.users;
 
-                        // Save to localStorage
                         localStorage.setItem('bfsa_students', JSON.stringify(students));
                         localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
                         localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
@@ -2122,7 +2291,6 @@
 
                         showToast(`📤 Data Restored! ${students.length} students loaded.`, "success");
                         
-                        // Refresh UI
                         renderStudentList();
                         updateFinancialDashboard();
                         syncHistorySearchDropdown();
@@ -2155,21 +2323,18 @@
                 if (el) el.value = todayDateStr;
             });
 
-            // Load school name
             const schoolName = document.getElementById('school_name_setting');
             if (schoolName) {
                 const savedName = localStorage.getItem('bfsa_school_name');
                 if (savedName) schoolName.value = savedName;
             }
 
-            // Load Google Sheet URL
             const sheetUrl = document.getElementById('google_sheet_url_setting');
             if (sheetUrl) {
                 const savedUrl = localStorage.getItem('bfsa_google_sheet_url');
                 if (savedUrl) sheetUrl.value = savedUrl;
             }
 
-            // Auto-login for demo
             if (window.location.search.includes('autologin')) {
                 setTimeout(() => executeSecurePortalLogin(), 500);
             }
