@@ -278,6 +278,18 @@
             text-align: center;
         }
 
+        /* SYNC INDICATOR STYLING */
+        .sync-status-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .status-synced { background-color: #d1e7dd; color: #0f5132; }
+        .status-pending { background-color: #fff3cd; color: #856404; }
+
         @media print {
             body * { visibility: hidden; }
             #printable_pdf_area, #printable_pdf_area * { visibility: visible; }
@@ -290,11 +302,11 @@
 
     <div class="header">
         Bright Future Science Academy
+        <span id="global_sync_badge" class="sync-status-badge status-synced">✓ Google Sheet Synced</span>
     </div>
 
     <div class="container">
         
-        <!-- HARDWARE SAFE INTERNAL MEMORY BACKUP PROTECTION -->
         <div class="backup-vault-box">
             <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Mobile Memory Data Security Vault (Anti-Delete Protection)</h4>
             <p style="margin:5px 0 0 0; font-size:12px; color:#555;">
@@ -307,14 +319,12 @@
             </div>
         </div>
 
-        <!-- FINANCIAL DASHBOARD -->
         <div class="dashboard">
             <div class="dash-card monthly"><h4>Monthly Fees</h4><p id="dash_month">Rs. 0</p></div>
             <div class="dash-card yearly"><h4>Yearly Fees</h4><p id="dash_year">Rs. 0</p></div>
             <div class="dash-card lifetime"><h4>Lifetime Fees</h4><p id="dash_life">Rs. 0</p></div>
         </div>
         
-        <!-- Navigation Tabs -->
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab('registration')">1. Register</button>
             <button class="tab-btn" onclick="switchTab('attendance')">2. Attendance</button>
@@ -323,7 +333,6 @@
             <button class="tab-btn" onclick="switchTab('reports')">📊 Reports & Registers</button>
         </div>
 
-        <!-- TAB 1: STUDENT REGISTRATION -->
         <div id="registration" class="tab-panel active">
             <h3>Naya Student Entry</h3>
             <div class="form-group"><label>Roll Number:</label><input type="text" id="reg_roll" placeholder="E.g. 101"></div>
@@ -351,12 +360,10 @@
             <button class="btn-danger-reset" onclick="clearSystemMemory()">⚠️ Reset All Old Test Data (App Zero Karein)</button>
         </div>
 
-        <!-- TAB 2: DAILY ATTENDANCE -->
         <div id="attendance" class="tab-panel">
             <h3>Daily Attendance Tracker</h3>
             <div class="form-group"><label>Date:</label><input type="text" id="att_date" onchange="loadAttendanceTab()"></div>
             
-            <!-- NEW HOLIDAY SETTING CONTROL BOX -->
             <div style="background: #fff4e5; border: 1px solid #ffe0b2; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
                 <h4 style="margin: 0 0 8px 0; color: var(--holiday-color);">🗓️ Chutti / Holiday Settings For This Date</h4>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -390,7 +397,6 @@
             </div>
         </div>
 
-        <!-- TAB 3: FEES RECORD -->
         <div id="fees" class="tab-panel">
             <h3>Fees Record Tracker</h3>
             <div class="filter-section" style="background:#e2e8f0;">
@@ -426,7 +432,6 @@
             </div>
         </div>
 
-        <!-- TAB 4: TEST MARKS -->
         <div id="tests" class="tab-panel">
             <h3>Subject Wise Test Marks Entry</h3>
             <div class="form-group"><label>Test Date:</label><input type="text" id="test_date"></div>
@@ -452,10 +457,8 @@
             </div>
         </div>
 
-        <!-- TAB 5: REPORTS & ATTENDANCE REGISTER DESK -->
         <div id="reports" class="tab-panel">
             
-            <!-- SEARCH STUDENT LIFETIME HISTORY (FOR PARENTS) -->
             <div class="report-box" style="border: 2px solid var(--primary-color); background: #f8fafc;">
                 <h3 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color);">🔍 Parents Search Desk (Generate PDF Report Card)</h3>
                 <p style="font-size: 12px; margin-top: -5px; color: #555;">Kisi bhi bache ka professional result card download karne ke liye roll number select karein:</p>
@@ -467,12 +470,10 @@
                     </select>
                 </div>
 
-                <!-- PDF Print Trigger Button -->
                 <div id="pdf_action_bar" style="display:none; text-align:right;">
                     <button class="btn-pdf-print" onclick="window.print()">🖨️ Download Report Card (Save as PDF)</button>
                 </div>
 
-                <!-- THE STRUCTURAL PDF LAYOUT CARD AREA -->
                 <div id="printable_pdf_area" style="display:none;">
                     <div class="pdf-report-card">
                         <div class="pdf-header">
@@ -519,7 +520,6 @@
                 </div>
             </div>
 
-            <!-- MUKAMMAL DIGITAL ATTENDANCE REGISTER VIEW -->
             <div class="report-box" style="border: 2px solid var(--success-color); background: #ffffff; margin-top: 25px;">
                 <h3 style="color: var(--success-color); border-bottom: 2px solid var(--success-color);">📋 Monthly Attendance Register Sheet View</h3>
                 <p style="font-size: 12px; margin-top: -5px; color: #555;">Pure mahine ka attendance register aik nazar mein dekhne ke liye class aur month select karein:</p>
@@ -552,7 +552,6 @@
                 </div>
             </div>
 
-            <!-- LIVE ACADEMY LOGS -->
             <h3 style="margin-top: 30px; border-bottom: 2px solid var(--purple-color); color: var(--purple-color);">📊 Professional Academy General Record Desk</h3>
             
             <div class="report-box" style="border-left: 5px solid var(--primary-color);">
@@ -581,7 +580,6 @@
                 </div>
             </div>
 
-            <!-- Financial Audit Module -->
             <div class="report-box">
                 <h4>Financial Year Audit Ledger</h4>
                 <div class="filter-section">
@@ -604,6 +602,9 @@
     </div>
 
     <script>
+        // ================= GOOGLE SHEET SYNC CONFIGURATION =================
+        const GOOGLE_SHEET_WEB_APP_URL = "یہاں_اپنا_گوگل_شیٹ_کا_ویب_ایپ_لنک_پیسٹ_کریں";
+
         const classCategories = [
             "Playgroup", "Nursery", "Prep", "1st Class", "2nd Class", "3rd Class", "4th Class", "5th Class", 
             "6th Class", "7th Class", "8th Class", 
@@ -622,6 +623,46 @@
 
         let smsQueue = [];
         let todayDateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
+
+        // Google Sheet Backup Sync Function
+        function syncDataToGoogleSheet(actionType, payloadData) {
+            if(!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes("یہاں_اپنا")) {
+                console.log("Google Sheet URL configuration missing.");
+                return;
+            }
+
+            const badge = document.getElementById('global_sync_badge');
+            if(badge) {
+                badge.innerText = "⏳ Syncing...";
+                badge.className = "sync-status-badge status-pending";
+            }
+
+            const bodyData = {
+                action: actionType,
+                timestamp: new Date().toLocaleString(),
+                data: payloadData
+            };
+
+            fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bodyData)
+            })
+            .then(() => {
+                if(badge) {
+                    badge.innerText = "✓ Google Sheet Synced";
+                    badge.className = "sync-status-badge status-synced";
+                }
+            })
+            .catch(err => {
+                console.error("Sync failed:", err);
+                if(badge) {
+                    badge.innerText = "❌ Sync Failed (Offline)";
+                    badge.className = "sync-status-badge status-pending";
+                }
+            });
+        }
 
         function initializeDropdowns() {
             const regSel = document.getElementById('reg_class');
@@ -736,6 +777,8 @@
                 syncHistorySearchDropdown();
                 document.getElementById('printable_pdf_area').style.display = 'none';
                 document.getElementById('pdf_action_bar').style.display = 'none';
+                
+                syncDataToGoogleSheet("CLEAR_ALL_DATA", { status: "empty" });
                 alert("🎉 System Reset Successful!");
             }
         }
@@ -751,7 +794,8 @@
             if(!roll || !name || !phone) { alert("Please fill all fields!"); return; }
             if(students.some(s => s.roll === roll)) { alert("Roll Number already exists!"); return; }
 
-            students.push({ roll, name, s_class, phone, custom_fee: fee, admission_date: adm_date });
+            let newStudent = { roll, name, s_class, phone, custom_fee: fee, admission_date: adm_date };
+            students.push(newStudent);
             localStorage.setItem('bfsa_students', JSON.stringify(students));
             
             document.getElementById('reg_roll').value = '';
@@ -762,6 +806,8 @@
             alert(`${name} registered successfully!`);
             renderStudentList();
             syncHistorySearchDropdown();
+
+            syncDataToGoogleSheet("ADD_STUDENT", newStudent);
         }
 
         function renderStudentList() {
@@ -781,12 +827,14 @@
         }
 
         function deleteStudent(index) {
-            let studentName = students[index].name;
-            if(confirm(`Remove ${studentName} from academy?`)) {
+            let removedStudent = students[index];
+            if(confirm(`Remove ${removedStudent.name} from academy?`)) {
                 students.splice(index, 1);
                 localStorage.setItem('bfsa_students', JSON.stringify(students));
                 renderStudentList();
                 syncHistorySearchDropdown();
+
+                syncDataToGoogleSheet("DELETE_STUDENT", { roll: removedStudent.roll, name: removedStudent.name });
             }
         }
 
@@ -798,6 +846,8 @@
             localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
             alert(`Date ${dateKey} marked as Holiday (${reason}) successfully!`);
             loadAttendanceTab();
+
+            syncDataToGoogleSheet("SET_HOLIDAY", { date: dateKey, reason: reason });
         }
 
         function removeHolidayStatus() {
@@ -808,6 +858,8 @@
                 document.getElementById('holiday_reason').value = '';
                 alert(`Holiday removed for ${dateKey}`);
                 loadAttendanceTab();
+
+                syncDataToGoogleSheet("REMOVE_HOLIDAY", { date: dateKey });
             }
         }
 
@@ -863,6 +915,9 @@
             if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
             dailyAttendanceLog[dateKey][roll] = status;
             localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+
+            let s = students.find(st => st.roll === roll) || { name: "Unknown", s_class: "N/A" };
+            syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, s_class: s.s_class, status: status });
         }
 
         function sendSingleAbsentSMS(roll) {
@@ -939,12 +994,15 @@
             feeStatusMap[key] = 'Paid';
             localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
             
-            feeTransactions.push({ roll: roll, month: month, year: year, amount: studentFeeAmt, dateAdded: todayDateStr, timeAdded: liveTime });
+            let transactionObj = { roll: roll, month: month, year: year, amount: studentFeeAmt, dateAdded: todayDateStr, timeAdded: liveTime };
+            feeTransactions.push(transactionObj);
             localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
 
             let msg = `السلام علیکم! برائٹ فیوچر سائنس اکیڈمی: آپ کے بچے ${s.name} کی ماہانہ فیس بابت مہینہ ${month}-${year} رقم مبلغ ${studentFeeAmt} روپے موصول ہو چکی ہے۔ شکریہ!`;
             sendWhatsApp(s.phone, msg);
             loadFeesTab();
+
+            syncDataToGoogleSheet("COLLECT_FEE", { roll: roll, name: s.name, s_class: s.s_class, month: month, year: year, amount: studentFeeAmt, date: todayDateStr, time: liveTime });
         }
 
         function sendSingleFeeWarning(roll, month, year) {
@@ -999,8 +1057,13 @@
         function saveTestRecordDirectly(roll, subject, total, obt) {
             let tDate = document.getElementById('test_date').value.trim();
             globalTestRecords = globalTestRecords.filter(r => !(r.roll === roll && r.subject === subject && r.date === tDate));
-            globalTestRecords.push({ roll: roll, date: tDate, subject: subject, total: parseInt(total), obtained: parseInt(obt) });
+            
+            let testObj = { roll: roll, date: tDate, subject: subject, total: parseInt(total), obtained: parseInt(obt) };
+            globalTestRecords.push(testObj);
             localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+
+            let s = students.find(st => st.roll === roll) || { name: "Unknown", s_class: "N/A" };
+            syncDataToGoogleSheet("SAVE_TEST_MARK", { date: tDate, roll: roll, name: s.name, s_class: s.s_class, subject: subject, total: total, obtained: obt });
         }
 
         function sendSingleTestMarkSMS(roll) {
@@ -1361,6 +1424,8 @@
                         updateFinancialDashboard();
                         syncHistorySearchDropdown();
                         loadAttendanceTab();
+
+                        syncDataToGoogleSheet("RESTORE_FULL_BACKUP", { total_students: students.length });
                     } else {
                         alert("❌ Galti: Yeh valid Academy Backup file nahi hai!");
                     }
