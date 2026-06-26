@@ -133,7 +133,7 @@
 
         .container { padding: 15px; max-width: 1100px; margin: auto; }
 
-        /* Dashboard - Only for Admin */
+        /* Admin Stats */
         .admin-stats {
             display: none;
             background: white;
@@ -163,7 +163,7 @@
         .stat-card.red p { color: var(--danger-color); }
         .stat-card.purple p { color: var(--purple-color); }
 
-        /* Dashboard Cards */
+        /* Dashboard */
         .dashboard {
             display: flex;
             justify-content: space-between;
@@ -616,1946 +616,1716 @@
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
-    <div id="bfsa_login_overlay">
-        <div class="login-card">
-            <div class="logo-icon">🏫</div>
-            <h2>Bright Future Academy</h2>
-            <p class="subtitle">Multi-Teacher Portal Access Control</p>
-            <hr>
-            <div class="login-form-group">
-                <label>👤 Username:</label>
-                <input type="text" id="login_username" placeholder="Enter username" value="admin">
-            </div>
-            <div class="login-form-group">
-                <label>🔒 Password:</label>
-                <input type="password" id="login_password" placeholder="Enter password" value="admin123">
-            </div>
-            <button class="btn-login" id="login_submit_btn" onclick="executeSecurePortalLogin()">
-                🔓 Unlock Portal & Sync
-            </button>
-            <div id="login_msg"></div>
-            <div class="demo-hint">
-                💡 <strong>Demo Credentials:</strong> admin/admin123 | teacher/teacher123 | principal/principal123
-            </div>
+<!-- LOGIN SCREEN -->
+<div id="bfsa_login_overlay">
+    <div class="login-card">
+        <div class="logo-icon">🏫</div>
+        <h2>Bright Future Academy</h2>
+        <p class="subtitle">Multi-Teacher Portal Access Control</p>
+        <hr>
+        <div class="login-form-group">
+            <label>👤 Username:</label>
+            <input type="text" id="login_username" placeholder="Enter username" value="admin">
+        </div>
+        <div class="login-form-group">
+            <label>🔒 Password:</label>
+            <input type="password" id="login_password" placeholder="Enter password" value="admin123">
+        </div>
+        <button class="btn-login" id="login_submit_btn" onclick="executeSecurePortalLogin()">
+            🔓 Unlock Portal & Sync
+        </button>
+        <div id="login_msg"></div>
+        <div class="demo-hint">
+            💡 <strong>Demo Credentials:</strong> admin/admin123 | teacher/teacher123 | principal/principal123
         </div>
     </div>
+</div>
 
-    <!-- MAIN APP -->
-    <div id="bfsa_main_app_content">
-        <div class="header">
-            Bright Future Science Academy
-            <span id="global_sync_badge" class="sync-status-badge status-offline">📡 Offline Mode</span>
-            <span id="logged_teacher_badge" style="position:absolute; right:15px; font-size:11px; background:rgba(255,255,255,0.2); padding:4px 8px; border-radius:4px; top:15px;">👤 User: Loading...</span>
+<!-- MAIN APP -->
+<div id="bfsa_main_app_content">
+    <div class="header">
+        Bright Future Science Academy
+        <span id="global_sync_badge" class="sync-status-badge status-synced">☁️ Cloud Synced</span>
+        <span id="logged_teacher_badge" style="position:absolute; right:15px; font-size:11px; background:rgba(255,255,255,0.2); padding:4px 8px; border-radius:4px; top:15px;">👤 User: Loading...</span>
+    </div>
+
+    <div class="container">
+        
+        <!-- ONLINE USERS -->
+        <div id="online_users_section" style="display:none; background:#e8f5e9; padding:10px; border-radius:8px; margin-bottom:15px;">
+            <h4 style="margin:0 0 8px 0; color:#2e7d32;">🟢 Online Teachers</h4>
+            <div id="online_users_list" class="online-users">
+                <span class="online-user-badge"><span class="dot"></span> Admin (You)</span>
+            </div>
         </div>
 
-        <div class="container">
+        <!-- ADMIN STATS -->
+        <div id="admin_stats_section" class="admin-stats">
+            <h4 style="margin:0 0 10px 0; color:var(--primary-color);">📊 Academy Statistics</h4>
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <h4>Total Students</h4>
+                    <p id="admin_total_students">0</p>
+                </div>
+                <div class="stat-card green">
+                    <h4>Present Today</h4>
+                    <p id="admin_present_today">0</p>
+                </div>
+                <div class="stat-card red">
+                    <h4>Absent Today</h4>
+                    <p id="admin_absent_today">0</p>
+                </div>
+            </div>
             
-            <!-- ONLINE USERS -->
-            <div id="online_users_section" style="display:none; background:#e8f5e9; padding:10px; border-radius:8px; margin-bottom:15px;">
-                <h4 style="margin:0 0 8px 0; color:#2e7d32;">🟢 Online Teachers</h4>
-                <div id="online_users_list" class="online-users">
-                    <span class="online-user-badge"><span class="dot"></span> Admin (You)</span>
+            <h4 style="margin:15px 0 10px 0; color:var(--primary-color);">💰 Fees Summary Report</h4>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Monthly Fees</h4>
+                    <p id="admin_monthly_fees">Rs. 0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Yearly Fees</h4>
+                    <p id="admin_yearly_fees">Rs. 0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Lifetime Fees</h4>
+                    <p id="admin_lifetime_fees">Rs. 0</p>
                 </div>
             </div>
+        </div>
 
-            <!-- ADMIN STATS - Only visible to Admin -->
-            <div id="admin_stats_section" class="admin-stats">
-                <h4 style="margin:0 0 10px 0; color:var(--primary-color);">📊 Academy Statistics</h4>
-                <div class="stats-grid">
-                    <div class="stat-card purple">
-                        <h4>Total Students</h4>
-                        <p id="admin_total_students">0</p>
-                    </div>
-                    <div class="stat-card green">
-                        <h4>Present Today</h4>
-                        <p id="admin_present_today">0</p>
-                    </div>
-                    <div class="stat-card red">
-                        <h4>Absent Today</h4>
-                        <p id="admin_absent_today">0</p>
-                    </div>
-                </div>
-                
-                <h4 style="margin:15px 0 10px 0; color:var(--primary-color);">💰 Fees Summary Report</h4>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Monthly Fees</h4>
-                        <p id="admin_monthly_fees">Rs. 0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Yearly Fees</h4>
-                        <p id="admin_yearly_fees">Rs. 0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Lifetime Fees</h4>
-                        <p id="admin_lifetime_fees">Rs. 0</p>
-                    </div>
-                </div>
+        <!-- BACKUP VAULT -->
+        <div class="backup-vault-box">
+            <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Data Security Vault (Google Sheets + Local Backup)</h4>
+            <p style="margin:5px 0 0 0; font-size:12px; color:#555;">
+                ☁️ <strong>Cloud Sync:</strong> All data is saved to Google Sheets (Permanent) | 
+                📥 <strong>Backup:</strong> Download manual backup anytime
+            </p>
+            <div class="backup-btn-group">
+                <button class="btn-backup-export" onclick="exportAcademyBackupFile()">📥 Download Full Backup</button>
+                <button class="btn-backup-import" onclick="document.getElementById('import_file_input').click()">📤 Restore from Backup</button>
+                <button class="btn-backup-export" style="background-color:#17a2b8;" onclick="syncAllDataToCloud()">☁️ Sync to Cloud</button>
+                <input type="file" id="import_file_input" style="display:none;" accept=".txt,.json" onchange="importAcademyBackupFile(this)">
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="dashboard">
+            <div class="dash-card monthly"><h4>Monthly Fees</h4><p id="dash_month">Rs. 0</p></div>
+            <div class="dash-card yearly"><h4>Yearly Fees</h4><p id="dash_year">Rs. 0</p></div>
+            <div class="dash-card lifetime"><h4>Lifetime Fees</h4><p id="dash_life">Rs. 0</p></div>
+        </div>
+        
+        <!-- TABS -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('registration')">1. Register</button>
+            <button class="tab-btn" onclick="switchTab('attendance')">2. Attendance</button>
+            <button class="tab-btn" onclick="switchTab('fees')">3. Fees</button>
+            <button class="tab-btn" onclick="switchTab('tests')">4. Tests</button>
+            <button class="tab-btn" onclick="switchTab('reports')">📊 Reports</button>
+            <button class="tab-btn hidden-tab" id="admin_tab_btn" onclick="switchTab('admin')">⚙️ Admin</button>
+        </div>
+
+        <!-- REGISTRATION TAB -->
+        <div id="registration" class="tab-panel active">
+            <h3>📝 New Student Registration</h3>
+            <div class="form-group"><label>Roll Number:</label><input type="text" id="reg_roll" placeholder="E.g. 101"></div>
+            <div class="form-group"><label>Student Name:</label><input type="text" id="reg_name" placeholder="E.g. Ali Ahmad"></div>
+            <div class="form-group"><label>Select Class:</label><select id="reg_class"></select></div>
+            <div class="form-group"><label>Parent Phone Number:</label><input type="tel" id="reg_phone" placeholder="E.g. 923001234567"></div>
+            <div class="form-group"><label>Monthly Fee (Rs.):</label><input type="number" id="reg_fee" placeholder="E.g. 2500" value="2500" min="0"></div>
+            <div class="form-group"><label>Admission Date:</label><input type="text" id="reg_adm_date" placeholder="DD-MM-YYYY"></div>
+            <button class="btn" onclick="saveStudent()">💾 Save Student</button>
+
+            <h3 style="margin-top:25px;">📋 Registered Students</h3>
+            <div class="filter-section">
+                <label>🔍 Filter By Class:</label>
+                <select id="filter_class_reg" onchange="renderStudentList()"><option value="All">All Academy Students</option></select>
+                <span id="class_count_display" class="class-count-badge">Total: 0</span>
             </div>
 
-            <!-- BACKUP VAULT -->
-            <div class="backup-vault-box">
-                <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Data Security Vault (Auto-Save + Backup)</h4>
-                <p style="margin:5px 0 0 0; font-size:12px; color:#555;">
-                    ⚡ <strong>Auto-Save:</strong> Every entry is automatically saved | 
-                    📥 <strong>Backup:</strong> Download daily backup
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Phone</th><th>Fee</th><th>Adm. Date</th><th>Action</th></tr></thead>
+                    <tbody id="student_list_tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE TAB -->
+        <div id="attendance" class="tab-panel">
+            <h3>📅 Daily Attendance</h3>
+            <div class="form-group"><label>Date:</label><input type="text" id="att_date" onchange="loadAttendanceTab()"></div>
+            
+            <div style="background: #fff4e5; border: 1px solid #ffe0b2; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 8px 0; color: var(--holiday-color);">🗓️ Holiday Settings</h4>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="holiday_reason" placeholder="Holiday reason, e.g., Sunday, Eid">
+                    </div>
+                    <button class="action-btn" style="background: var(--holiday-color); padding: 10px;" onclick="toggleHolidayStatus()">Save Holiday</button>
+                    <button class="action-btn" style="background: #90a4ae; padding: 10px;" onclick="removeHolidayStatus()">Remove Holiday</button>
+                </div>
+                <div id="holiday_current_status" style="margin-top: 8px; font-weight: bold; font-size: 13px; color: #d84315;"></div>
+            </div>
+
+            <div id="attendance_interactive_area">
+                <p style="font-size: 12px; color: #555; background: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; border-radius: 4px;">
+                    💡 <b>Tip:</b> All students are <b>Present</b> by default. Mark only <b>Absent</b> students.
                 </p>
-                <div class="backup-btn-group">
-                    <button class="btn-backup-export" onclick="exportAcademyBackupFile()">📥 Download Full Backup</button>
-                    <button class="btn-backup-import" onclick="document.getElementById('import_file_input').click()">📤 Restore from Backup</button>
-                    <button class="btn-backup-export" style="background-color:#17a2b8;" onclick="syncAllDataToCloud()">☁️ Sync to Cloud</button>
-                    <input type="file" id="import_file_input" style="display:none;" accept=".txt,.json" onchange="importAcademyBackupFile(this)">
-                </div>
-            </div>
 
-            <!-- DASHBOARD - Teachers can see only their dashboard -->
-            <div class="dashboard" id="teacher_dashboard">
-                <div class="dash-card monthly"><h4>Monthly Fees</h4><p id="dash_month">Rs. 0</p></div>
-                <div class="dash-card yearly"><h4>Yearly Fees</h4><p id="dash_year">Rs. 0</p></div>
-                <div class="dash-card lifetime"><h4>Lifetime Fees</h4><p id="dash_life">Rs. 0</p></div>
-            </div>
-            
-            <!-- TABS -->
-            <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('registration')">1. Register</button>
-                <button class="tab-btn" onclick="switchTab('attendance')">2. Attendance</button>
-                <button class="tab-btn" onclick="switchTab('fees')">3. Fees</button>
-                <button class="tab-btn" onclick="switchTab('tests')">4. Tests</button>
-                <button class="tab-btn" onclick="switchTab('reports')">📊 Reports</button>
-                <button class="tab-btn hidden-tab" id="admin_tab_btn" onclick="switchTab('admin')">⚙️ Admin</button>
-            </div>
-
-            <!-- REGISTRATION TAB -->
-            <div id="registration" class="tab-panel active">
-                <h3>📝 New Student Registration</h3>
-                <div class="form-group"><label>Roll Number:</label><input type="text" id="reg_roll" placeholder="E.g. 101"></div>
-                <div class="form-group"><label>Student Name:</label><input type="text" id="reg_name" placeholder="E.g. Ali Ahmad"></div>
-                <div class="form-group"><label>Select Class:</label><select id="reg_class"></select></div>
-                <div class="form-group"><label>Parent Phone Number:</label><input type="tel" id="reg_phone" placeholder="E.g. 923001234567"></div>
-                <div class="form-group"><label>Monthly Fee (Rs.):</label><input type="number" id="reg_fee" placeholder="E.g. 2500" value="2500" min="0"></div>
-                <div class="form-group"><label>Admission Date:</label><input type="text" id="reg_adm_date" placeholder="DD-MM-YYYY"></div>
-                <button class="btn" onclick="saveStudent()">💾 Save Student</button>
-
-                <h3 style="margin-top:25px;">📋 Registered Students</h3>
                 <div class="filter-section">
-                    <label>🔍 Filter By Class:</label>
-                    <select id="filter_class_reg" onchange="renderStudentList()"><option value="All">All Academy Students</option></select>
-                    <span id="class_count_display" class="class-count-badge">Total: 0</span>
+                    <label>Class View:</label>
+                    <select id="filter_class_att" onchange="loadAttendanceTab()"><option value="All">All Academy</option></select>
                 </div>
+
+                <button class="btn-bulk-mega" onclick="startBulkAttendanceSMS()">⚡ Send Bulk Absent SMS</button>
 
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Phone</th><th>Fee</th><th>Adm. Date</th><th>Action</th></tr></thead>
-                        <tbody id="student_list_tbody"></tbody>
+                        <thead><tr><th>Roll</th><th>Name</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="attendance_tbody"></tbody>
                     </table>
                 </div>
             </div>
+        </div>
 
-            <!-- ATTENDANCE TAB -->
-            <div id="attendance" class="tab-panel">
-                <h3>📅 Daily Attendance</h3>
-                <div class="form-group"><label>Date:</label><input type="text" id="att_date" onchange="loadAttendanceTab()"></div>
-                
-                <div style="background: #fff4e5; border: 1px solid #ffe0b2; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                    <h4 style="margin: 0 0 8px 0; color: var(--holiday-color);">🗓️ Holiday Settings</h4>
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <input type="text" id="holiday_reason" placeholder="Holiday reason, e.g., Sunday, Eid">
-                        </div>
-                        <button class="action-btn" style="background: var(--holiday-color); padding: 10px;" onclick="toggleHolidayStatus()">Save Holiday</button>
-                        <button class="action-btn" style="background: #90a4ae; padding: 10px;" onclick="removeHolidayStatus()">Remove Holiday</button>
-                    </div>
-                    <div id="holiday_current_status" style="margin-top: 8px; font-weight: bold; font-size: 13px; color: #d84315;"></div>
+        <!-- FEES TAB -->
+        <div id="fees" class="tab-panel">
+            <h3>💰 Fees Record</h3>
+            <div class="filter-section" style="background:#e2e8f0;">
+                <div style="flex:1; min-width:120px;">
+                    <label>Month:</label>
+                    <select id="fee_month" onchange="loadFeesTab()">
+                        <option value="January">January</option><option value="February">February</option>
+                        <option value="March">March</option><option value="April">April</option>
+                        <option value="May">May</option><option value="June" selected>June</option>
+                        <option value="July">July</option><option value="August">August</option>
+                        <option value="September">September</option><option value="October">October</option>
+                        <option value="November">November</option><option value="December">December</option>
+                    </select>
+                </div>
+                <div style="flex:1; min-width:100px;">
+                    <label>Year:</label>
+                    <select id="fee_year" onchange="loadFeesTab()"></select>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <label>Class View:</label>
+                <select id="filter_class_fee" onchange="loadFeesTab()"><option value="All">All Academy</option></select>
+            </div>
+
+            <button class="btn-bulk-mega" onclick="startBulkFeeWarningSMS()">⚡ Send Bulk Fee Reminders</button>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="fees_tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TESTS TAB -->
+        <div id="tests" class="tab-panel">
+            <h3>📝 Test Marks Entry</h3>
+            <div class="form-group"><label>Test Date:</label><input type="text" id="test_date"></div>
+            <div class="form-group"><label>Subject:</label><input type="text" id="test_subject" value="Physics"></div>
+            <div class="form-group"><label>Total Marks:</label><input type="number" id="test_total" value="50" min="1"></div>
+            
+            <p style="font-size: 12px; color: #1b365d; background: #e0f2fe; padding: 8px; border-left: 4px solid #0284c7; border-radius: 4px;">
+                ⚠️ <b>Safe Protection:</b> Blank marks are treated as <b>N/E (Not Entered)</b>.
+            </p>
+
+            <div class="filter-section">
+                <label>Class View:</label>
+                <select id="filter_class_test" onchange="loadTestsTab()"><option value="All">All Academy</option></select>
+            </div>
+
+            <button class="btn-bulk-mega" onclick="startBulkTestMarksSMS()">⚡ Send Bulk Test Marks</button>
+
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Marks</th><th>Action</th></tr></thead>
+                    <tbody id="tests_tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- REPORTS TAB -->
+        <div id="reports" class="tab-panel">
+            <div class="report-box" style="border: 2px solid var(--primary-color); background: #f8fafc;">
+                <h3 style="color: var(--primary-color);">📄 Generate Report Card</h3>
+                <div class="form-group">
+                    <label>Select Student:</label>
+                    <select id="history_search_roll" onchange="generateStudentLifetimeProfile()">
+                        <option value="">-- Select Student --</option>
+                    </select>
                 </div>
 
-                <div id="attendance_interactive_area">
-                    <p style="font-size: 12px; color: #555; background: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; border-radius: 4px;">
-                        💡 <b>Tip:</b> All students are <b>Present</b> by default. Mark only <b>Absent</b> students.
-                    </p>
+                <div id="pdf_action_bar" style="display:none; text-align:right;">
+                    <button class="btn-pdf-print" onclick="printStudentReport()">🖨️ Download PDF Report</button>
+                </div>
 
-                    <div class="filter-section">
-                        <label>Class View:</label>
-                        <select id="filter_class_att" onchange="loadAttendanceTab()"><option value="All">All Academy</option></select>
-                    </div>
-
-                    <button class="btn-bulk-mega" onclick="startBulkAttendanceSMS()">⚡ Send Bulk Absent SMS</button>
-
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Roll</th><th>Name</th><th>Status</th><th>Action</th></tr></thead>
-                            <tbody id="attendance_tbody"></tbody>
-                        </table>
+                <div id="printable_pdf_area" style="display:none;">
+                    <div class="pdf-report-card">
+                        <div class="pdf-header">
+                            <h2>Bright Future Science Academy</h2>
+                            <p>Official Student Progress Report</p>
+                        </div>
+                        <div class="pdf-student-info">
+                            <div class="pdf-info-item"><span class="label">Name:</span><span class="value" id="pdf_student_name">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Roll No:</span><span class="value" id="pdf_roll_no">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Class:</span><span class="value" id="pdf_class">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Phone:</span><span class="value" id="pdf_phone">---</span></div>
+                            <div class="pdf-info-item"><span class="label">Admission:</span><span class="value" id="pdf_admission_date">---</span></div>
+                        </div>
+                        <div class="pdf-section-title">📅 Attendance Record</div>
+                        <table class="pdf-table"><thead><tr><th>Month</th><th>Total Days</th><th>Present</th><th>Absent</th><th>%</th></tr></thead><tbody id="pdf_attendance_tbody"></tbody></table>
+                        <div class="pdf-section-title">💰 Fees Statement</div>
+                        <table class="pdf-table"><thead><tr><th>Month-Year</th><th>Fee</th><th>Status</th><th>Date</th></tr></thead><tbody id="pdf_fees_tbody"></tbody></table>
+                        <div class="pdf-section-title">📝 Test Results</div>
+                        <table class="pdf-table"><thead><tr><th>Date</th><th>Subject</th><th>Total</th><th>Obtained</th><th>%</th></tr></thead><tbody id="pdf_tests_tbody"></tbody></table>
+                        <div class="pdf-footer-note">Generated on: <span id="pdf_live_generation_date"></span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- FEES TAB -->
-            <div id="fees" class="tab-panel">
-                <h3>💰 Fees Record</h3>
-                <div class="filter-section" style="background:#e2e8f0;">
+            <div class="report-box" style="border: 2px solid var(--success-color);">
+                <h3 style="color: var(--success-color);">📋 Monthly Attendance Register</h3>
+                <div class="filter-section" style="background:#e8f5e9;">
+                    <div style="flex:1; min-width:150px;">
+                        <label>Class:</label>
+                        <select id="reg_sheet_class" onchange="generateMonthlyRegisterSheet()"><option value="All">All Academy</option></select>
+                    </div>
                     <div style="flex:1; min-width:120px;">
                         <label>Month:</label>
-                        <select id="fee_month" onchange="loadFeesTab()">
-                            <option value="January">January</option><option value="February">February</option>
-                            <option value="March">March</option><option value="April">April</option>
-                            <option value="May">May</option><option value="June" selected>June</option>
-                            <option value="July">July</option><option value="August">August</option>
-                            <option value="September">September</option><option value="October">October</option>
-                            <option value="November">November</option><option value="December">December</option>
+                        <select id="reg_sheet_month" onchange="generateMonthlyRegisterSheet()">
+                            <option value="01">January</option><option value="02">February</option>
+                            <option value="03">March</option><option value="04">April</option>
+                            <option value="05">May</option><option value="06" selected>June</option>
+                            <option value="07">July</option><option value="08">August</option>
+                            <option value="09">September</option><option value="10">October</option>
+                            <option value="11">November</option><option value="12">December</option>
                         </select>
                     </div>
                     <div style="flex:1; min-width:100px;">
                         <label>Year:</label>
-                        <select id="fee_year" onchange="loadFeesTab()"></select>
+                        <select id="reg_sheet_year" onchange="generateMonthlyRegisterSheet()"></select>
                     </div>
                 </div>
-
-                <div class="filter-section">
-                    <label>Class View:</label>
-                    <select id="filter_class_fee" onchange="loadFeesTab()"><option value="All">All Academy</option></select>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="register-table" id="register_sheet_table"></table>
                 </div>
+            </div>
+        </div>
 
-                <button class="btn-bulk-mega" onclick="startBulkFeeWarningSMS()">⚡ Send Bulk Fee Reminders</button>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Roll</th><th>Name</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="fees_tbody"></tbody>
-                    </table>
+        <!-- ADMIN TAB -->
+        <div id="admin" class="tab-panel">
+            <h3>⚙️ Admin Control Panel</h3>
+            
+            <!-- Academy Statistics -->
+            <div class="admin-panel" style="background:#e8f5e9; border-color: var(--success-color);">
+                <h4>📊 Academy Statistics (Only Admin)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Total Students</div>
+                        <div style="font-size:22px; font-weight:bold; color:var(--purple-color);" id="admin_total_students2">0</div>
+                    </div>
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Present Today</div>
+                        <div style="font-size:22px; font-weight:bold; color:var(--success-color);" id="admin_present_today2">0</div>
+                    </div>
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Absent Today</div>
+                        <div style="font-size:22px; font-weight:bold; color:var(--danger-color);" id="admin_absent_today2">0</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- TESTS TAB -->
-            <div id="tests" class="tab-panel">
-                <h3>📝 Test Marks Entry</h3>
-                <div class="form-group"><label>Test Date:</label><input type="text" id="test_date"></div>
-                <div class="form-group"><label>Subject:</label><input type="text" id="test_subject" value="Physics"></div>
-                <div class="form-group"><label>Total Marks:</label><input type="number" id="test_total" value="50" min="1"></div>
-                
-                <p style="font-size: 12px; color: #1b365d; background: #e0f2fe; padding: 8px; border-left: 4px solid #0284c7; border-radius: 4px;">
-                    ⚠️ <b>Safe Protection:</b> Blank marks are treated as <b>N/E (Not Entered)</b>.
-                </p>
-
-                <div class="filter-section">
-                    <label>Class View:</label>
-                    <select id="filter_class_test" onchange="loadTestsTab()"><option value="All">All Academy</option></select>
-                </div>
-
-                <button class="btn-bulk-mega" onclick="startBulkTestMarksSMS()">⚡ Send Bulk Test Marks</button>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Roll</th><th>Name</th><th>Marks</th><th>Action</th></tr></thead>
-                        <tbody id="tests_tbody"></tbody>
-                    </table>
+            <!-- Fees Summary -->
+            <div class="admin-panel" style="background:#f0f4ff; border-color: var(--purple-color);">
+                <h4>💰 Fees Summary Report (Only Admin)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Monthly Fees</div>
+                        <div style="font-size:20px; font-weight:bold; color:var(--success-color);" id="admin_monthly_fees2">Rs. 0</div>
+                    </div>
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Yearly Fees</div>
+                        <div style="font-size:20px; font-weight:bold; color:var(--warning-color);" id="admin_yearly_fees2">Rs. 0</div>
+                    </div>
+                    <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                        <div style="font-size:11px; color:#666;">Lifetime Fees</div>
+                        <div style="font-size:20px; font-weight:bold; color:#17a2b8;" id="admin_lifetime_fees2">Rs. 0</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- REPORTS TAB -->
-            <div id="reports" class="tab-panel">
-                <div class="report-box" style="border: 2px solid var(--primary-color); background: #f8fafc;">
-                    <h3 style="color: var(--primary-color);">📄 Generate Report Card</h3>
-                    <div class="form-group">
-                        <label>Select Student:</label>
-                        <select id="history_search_roll" onchange="generateStudentLifetimeProfile()">
-                            <option value="">-- Select Student --</option>
+            <!-- User Management -->
+            <div class="admin-panel">
+                <h4>👥 Manage Teachers & Users</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="new_username" placeholder="New username" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="password" id="new_password" placeholder="New password" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <select id="new_user_role" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                            <option value="principal">Principal</option>
                         </select>
                     </div>
-
-                    <div id="pdf_action_bar" style="display:none; text-align:right;">
-                        <button class="btn-pdf-print" onclick="printStudentReport()">🖨️ Download PDF Report</button>
-                    </div>
-
-                    <div id="printable_pdf_area" style="display:none;">
-                        <div class="pdf-report-card">
-                            <div class="pdf-header">
-                                <h2>Bright Future Science Academy</h2>
-                                <p>Official Student Progress Report</p>
-                            </div>
-                            <div class="pdf-student-info">
-                                <div class="pdf-info-item"><span class="label">Name:</span><span class="value" id="pdf_student_name">---</span></div>
-                                <div class="pdf-info-item"><span class="label">Roll No:</span><span class="value" id="pdf_roll_no">---</span></div>
-                                <div class="pdf-info-item"><span class="label">Class:</span><span class="value" id="pdf_class">---</span></div>
-                                <div class="pdf-info-item"><span class="label">Phone:</span><span class="value" id="pdf_phone">---</span></div>
-                                <div class="pdf-info-item"><span class="label">Admission:</span><span class="value" id="pdf_admission_date">---</span></div>
-                            </div>
-                            <div class="pdf-section-title">📅 Attendance Record</div>
-                            <table class="pdf-table"><thead><tr><th>Month</th><th>Total Days</th><th>Present</th><th>Absent</th><th>%</th></tr></thead><tbody id="pdf_attendance_tbody"></tbody></table>
-                            <div class="pdf-section-title">💰 Fees Statement</div>
-                            <table class="pdf-table"><thead><tr><th>Month-Year</th><th>Fee</th><th>Status</th><th>Date</th></tr></thead><tbody id="pdf_fees_tbody"></tbody></table>
-                            <div class="pdf-section-title">📝 Test Results</div>
-                            <table class="pdf-table"><thead><tr><th>Date</th><th>Subject</th><th>Total</th><th>Obtained</th><th>%</th></tr></thead><tbody id="pdf_tests_tbody"></tbody></table>
-                            <div class="pdf-footer-note">Generated on: <span id="pdf_live_generation_date"></span></div>
-                        </div>
-                    </div>
+                    <button class="btn-sm" onclick="addNewUser()" style="padding:8px 20px;">➕ Add User</button>
                 </div>
-
-                <div class="report-box" style="border: 2px solid var(--success-color);">
-                    <h3 style="color: var(--success-color);">📋 Monthly Attendance Register</h3>
-                    <div class="filter-section" style="background:#e8f5e9;">
-                        <div style="flex:1; min-width:150px;">
-                            <label>Class:</label>
-                            <select id="reg_sheet_class" onchange="generateMonthlyRegisterSheet()"><option value="All">All Academy</option></select>
-                        </div>
-                        <div style="flex:1; min-width:120px;">
-                            <label>Month:</label>
-                            <select id="reg_sheet_month" onchange="generateMonthlyRegisterSheet()">
-                                <option value="01">January</option><option value="02">February</option>
-                                <option value="03">March</option><option value="04">April</option>
-                                <option value="05">May</option><option value="06" selected>June</option>
-                                <option value="07">July</option><option value="08">August</option>
-                                <option value="09">September</option><option value="10">October</option>
-                                <option value="11">November</option><option value="12">December</option>
-                            </select>
-                        </div>
-                        <div style="flex:1; min-width:100px;">
-                            <label>Year:</label>
-                            <select id="reg_sheet_year" onchange="generateMonthlyRegisterSheet()"></select>
-                        </div>
-                    </div>
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="register-table" id="register_sheet_table"></table>
-                    </div>
+                <div id="user_list_container">
+                    <!-- Users will be listed here -->
                 </div>
             </div>
 
-            <!-- ADMIN TAB (Only visible to Admin) -->
-            <div id="admin" class="tab-panel">
-                <h3>⚙️ Admin Control Panel</h3>
-                
-                <!-- Academy Statistics -->
-                <div class="admin-panel" style="background:#e8f5e9; border-color: var(--success-color);">
-                    <h4>📊 Academy Statistics (Only Admin)</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Total Students</div>
-                            <div style="font-size:22px; font-weight:bold; color:var(--purple-color);" id="admin_total_students2">0</div>
-                        </div>
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Present Today</div>
-                            <div style="font-size:22px; font-weight:bold; color:var(--success-color);" id="admin_present_today2">0</div>
-                        </div>
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Absent Today</div>
-                            <div style="font-size:22px; font-weight:bold; color:var(--danger-color);" id="admin_absent_today2">0</div>
-                        </div>
+            <!-- System Settings -->
+            <div class="admin-panel" style="background:#fff8e1; border-color: var(--warning-color);">
+                <h4>⚡ System Settings</h4>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label>School Name:</label>
+                        <input type="text" id="school_name_setting" value="Bright Future Science Academy" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label>Google Sheet URL (Cloud Storage):</label>
+                        <input type="text" id="google_sheet_url_setting" value="https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
                     </div>
                 </div>
-
-                <!-- Fees Summary -->
-                <div class="admin-panel" style="background:#f0f4ff; border-color: var(--purple-color);">
-                    <h4>💰 Fees Summary Report (Only Admin)</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Monthly Fees</div>
-                            <div style="font-size:20px; font-weight:bold; color:var(--success-color);" id="admin_monthly_fees2">Rs. 0</div>
-                        </div>
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Yearly Fees</div>
-                            <div style="font-size:20px; font-weight:bold; color:var(--warning-color);" id="admin_yearly_fees2">Rs. 0</div>
-                        </div>
-                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
-                            <div style="font-size:11px; color:#666;">Lifetime Fees</div>
-                            <div style="font-size:20px; font-weight:bold; color:#17a2b8;" id="admin_lifetime_fees2">Rs. 0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User Management -->
-                <div class="admin-panel">
-                    <h4>👥 Manage Teachers & Users</h4>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <input type="text" id="new_username" placeholder="New username" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
-                        </div>
-                        <div style="flex: 1; min-width: 200px;">
-                            <input type="password" id="new_password" placeholder="New password" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
-                        </div>
-                        <div style="flex: 1; min-width: 150px;">
-                            <select id="new_user_role" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
-                                <option value="teacher">Teacher</option>
-                                <option value="admin">Admin</option>
-                                <option value="principal">Principal</option>
-                            </select>
-                        </div>
-                        <button class="btn-sm" onclick="addNewUser()" style="padding:8px 20px;">➕ Add User</button>
-                    </div>
-                    <div id="user_list_container">
-                        <!-- Users will be listed here -->
-                    </div>
-                </div>
-
-                <!-- System Settings -->
-                <div class="admin-panel" style="background:#fff8e1; border-color: var(--warning-color);">
-                    <h4>⚡ System Settings</h4>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <label>School Name:</label>
-                            <input type="text" id="school_name_setting" value="Bright Future Science Academy" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
-                        </div>
-                        <div style="flex: 1; min-width: 200px;">
-                            <label>Google Sheet URL:</label>
-                            <input type="text" id="google_sheet_url_setting" value="https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
-                        </div>
-                    </div>
-                    <div style="margin-top:15px;">
-                        <button class="btn-sm" onclick="saveSystemSettings()">💾 Save Settings</button>
-                        <button class="btn-sm btn-sm-danger" onclick="clearSystemMemory()" style="margin-left:10px;">⚠️ Reset All Data</button>
-                        <button class="btn-sm btn-sm-warning" onclick="exportAcademyBackupFile()" style="margin-left:10px;">📥 Backup Now</button>
-                    </div>
-                </div>
-
-                <!-- Online Teachers -->
-                <div class="admin-panel" style="background:#e8f5e9; border-color: var(--success-color);">
-                    <h4>🟢 Currently Online Teachers</h4>
-                    <div id="admin_online_users" class="online-users">
-                        <span class="online-user-badge"><span class="dot"></span> You (Admin)</span>
-                    </div>
-                    <p style="font-size:12px; color:#666; margin-top:10px;">
-                        💡 All teachers using this system see the same data in real-time.
-                    </p>
+                <div style="margin-top:15px;">
+                    <button class="btn-sm" onclick="saveSystemSettings()">💾 Save Settings</button>
+                    <button class="btn-sm btn-sm-danger" onclick="clearSystemMemory()" style="margin-left:10px;">⚠️ Reset All Data</button>
+                    <button class="btn-sm btn-sm-warning" onclick="exportAcademyBackupFile()" style="margin-left:10px;">📥 Backup Now</button>
                 </div>
             </div>
 
+            <!-- Online Teachers -->
+            <div class="admin-panel" style="background:#e8f5e9; border-color: var(--success-color);">
+                <h4>🟢 Currently Online Teachers</h4>
+                <div id="admin_online_users" class="online-users">
+                    <span class="online-user-badge"><span class="dot"></span> You (Admin)</span>
+                </div>
+                <p style="font-size:12px; color:#666; margin-top:10px;">
+                    💡 All teachers using this system see the same data in real-time via Google Sheets.
+                </p>
+            </div>
         </div>
+
     </div>
+</div>
 
-    <script>
-        // ================= CONFIGURATION =================
-        let GOOGLE_SHEET_WEB_APP_URL = localStorage.getItem('bfsa_google_sheet_url') || 
-            "https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec";
+<script>
+// ================= CONFIGURATION =================
+// ✅ GOOGLE SHEET URL - PERMANENT CLOUD STORAGE
+var GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec";
 
-        let currentActiveTeacher = "Admin";
-        let currentUserRole = "admin";
-        let smsQueue = [];
-        let isOfflineMode = false;
+var currentActiveTeacher = "Admin";
+var currentUserRole = "admin";
+var smsQueue = [];
+var isOfflineMode = false;
 
-        // ================= DATA STORE =================
-        let students = JSON.parse(localStorage.getItem('bfsa_students')) || [];
-        let feeStatusMap = JSON.parse(localStorage.getItem('bfsa_fees')) || {}; 
-        let feeTransactions = JSON.parse(localStorage.getItem('bfsa_transactions')) || [];
-        let dailyAttendanceLog = JSON.parse(localStorage.getItem('bfsa_attendance_logs')) || {};
-        let globalTestRecords = JSON.parse(localStorage.getItem('bfsa_test_records')) || [];
-        let academyHolidays = JSON.parse(localStorage.getItem('bfsa_holidays')) || {};
+// ================= DATA STORE =================
+var students = JSON.parse(localStorage.getItem('bfsa_students')) || [];
+var feeStatusMap = JSON.parse(localStorage.getItem('bfsa_fees')) || {}; 
+var feeTransactions = JSON.parse(localStorage.getItem('bfsa_transactions')) || [];
+var dailyAttendanceLog = JSON.parse(localStorage.getItem('bfsa_attendance_logs')) || {};
+var globalTestRecords = JSON.parse(localStorage.getItem('bfsa_test_records')) || [];
+var academyHolidays = JSON.parse(localStorage.getItem('bfsa_holidays')) || {};
 
-        // ================= USER MANAGEMENT =================
-        let systemUsers = JSON.parse(localStorage.getItem('bfsa_users')) || {
-            'admin': { password: 'admin123', role: 'admin' },
-            'teacher': { password: 'teacher123', role: 'teacher' },
-            'principal': { password: 'principal123', role: 'principal' }
-        };
+// ================= USER MANAGEMENT =================
+var systemUsers = JSON.parse(localStorage.getItem('bfsa_users')) || {
+    'admin': { password: 'admin123', role: 'admin' },
+    'teacher': { password: 'teacher123', role: 'teacher' },
+    'principal': { password: 'principal123', role: 'principal' }
+};
 
-        // ================= CLASS CATEGORIES =================
-        const classCategories = [
-            "Playgroup", "Nursery", "Prep", "1st Class", "2nd Class", "3rd Class", "4th Class", "5th Class", 
-            "6th Class", "7th Class", "8th Class", 
-            "9th Junior (Bio)", "9th Junior (Computer)", "9th Senior (Bio)", "9th Senior (Computer)",
-            "10th Matric (Bio)", "10th Matric (Computer)",
-            "11th (F.Sc Pre-Medical)", "11th (F.Sc Pre-Engineering)", "11th (ICS Computer)", "11th (I.Com)", "11th (F.A Arts)",
-            "12th (F.Sc Pre-Medical)", "12th (F.Sc Pre-Engineering)", "12th (ICS Computer)", "12th (I.Com)", "12th (F.A Arts)"
-        ];
+// ================= CLASS CATEGORIES =================
+var classCategories = [
+    "Playgroup", "Nursery", "Prep", "1st Class", "2nd Class", "3rd Class", "4th Class", "5th Class", 
+    "6th Class", "7th Class", "8th Class", 
+    "9th Junior (Bio)", "9th Junior (Computer)", "9th Senior (Bio)", "9th Senior (Computer)",
+    "10th Matric (Bio)", "10th Matric (Computer)",
+    "11th (F.Sc Pre-Medical)", "11th (F.Sc Pre-Engineering)", "11th (ICS Computer)", "11th (I.Com)", "11th (F.A Arts)",
+    "12th (F.Sc Pre-Medical)", "12th (F.Sc Pre-Engineering)", "12th (ICS Computer)", "12th (I.Com)", "12th (F.A Arts)"
+];
 
-        // ================= UTILITY FUNCTIONS =================
-        function getFormattedDate(date = new Date()) {
-            const d = date.getDate().toString().padStart(2, '0');
-            const m = (date.getMonth() + 1).toString().padStart(2, '0');
-            const y = date.getFullYear();
-            return `${d}-${m}-${y}`;
-        }
+// ================= UTILITY FUNCTIONS =================
+function getFormattedDate(date) {
+    if (!date) date = new Date();
+    var d = date.getDate().toString().padStart(2, '0');
+    var m = (date.getMonth() + 1).toString().padStart(2, '0');
+    var y = date.getFullYear();
+    return d + '-' + m + '-' + y;
+}
 
-        function getLiveTime() {
-            return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        }
+function getLiveTime() {
+    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
 
-        let todayDateStr = getFormattedDate();
+var todayDateStr = getFormattedDate();
 
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast-message toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.5s';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        }
+function showToast(message, type) {
+    if (!type) type = 'success';
+    var toast = document.createElement('div');
+    toast.className = 'toast-message toast-' + type;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(function() { toast.remove(); }, 500);
+    }, 3000);
+}
 
-        function setLoginMessage(msg, type = 'error') {
-            const msgDiv = document.getElementById('login_msg');
-            if (msgDiv) {
-                msgDiv.textContent = msg;
-                msgDiv.className = `login-${type}`;
-            }
-        }
+function setLoginMessage(msg, type) {
+    if (!type) type = 'error';
+    var msgDiv = document.getElementById('login_msg');
+    if (msgDiv) {
+        msgDiv.textContent = msg;
+        msgDiv.className = 'login-' + type;
+    }
+}
 
-        // ================= SECURE LOGIN =================
-        function executeSecurePortalLogin() {
-            const userIn = document.getElementById("login_username").value.trim().toLowerCase();
-            const passIn = document.getElementById("login_password").value.trim();
-            const submitBtn = document.getElementById("login_submit_btn");
+// ================= SECURE LOGIN =================
+function executeSecurePortalLogin() {
+    var userIn = document.getElementById("login_username").value.trim().toLowerCase();
+    var passIn = document.getElementById("login_password").value.trim();
+    var submitBtn = document.getElementById("login_submit_btn");
 
-            if(!userIn || !passIn) {
-                setLoginMessage("⚠️ Username and Password required!", "error");
-                return;
-            }
+    if(!userIn || !passIn) {
+        setLoginMessage("⚠️ Username and Password required!", "error");
+        return;
+    }
 
-            setLoginMessage("🔄 Connecting...", "loading");
-            submitBtn.disabled = true;
-            submitBtn.textContent = "⏳ Please wait...";
+    setLoginMessage("🔄 Connecting to Cloud...", "loading");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "⏳ Please wait...";
 
-            // Check if user exists and is not removed
-            if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
-                currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                currentUserRole = systemUsers[userIn].role;
-                document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
-                setLoginMessage("✅ Login Successful!", "success");
-                showToast("✅ Welcome " + currentActiveTeacher, "success");
-                tryCloudSync();
-                unlockWebsiteMainDashboard();
-                return;
-            }
+    // Check local users first
+    if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
+        currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
+        currentUserRole = systemUsers[userIn].role;
+        document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
+        setLoginMessage("✅ Login Successful! Cloud Synced.", "success");
+        showToast("✅ Welcome " + currentActiveTeacher, "success");
+        // Try cloud sync in background
+        tryCloudSync();
+        unlockWebsiteMainDashboard();
+        return;
+    }
 
-            // Check cloud
-            fetch(GOOGLE_SHEET_WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    action: "LOGIN_CHECK",
-                    username: userIn,
-                    password: passIn
-                })
-            })
-            .then(res => res.json())
-            .then(response => {
-                if(response.result === "success" && response.login === true) {
-                    currentActiveTeacher = response.teacher || userIn;
-                    currentUserRole = response.role || "teacher";
-                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
-                    setLoginMessage("✅ Cloud Login Successful!", "success");
-                    showToast("✅ Welcome " + currentActiveTeacher, "success");
-                    unlockWebsiteMainDashboard();
-                } else {
-                    if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
-                        currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                        currentUserRole = systemUsers[userIn].role;
-                        document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
-                        setLoginMessage("✅ Offline Login Successful!", "success");
-                        showToast("✅ Welcome " + currentActiveTeacher + " (Offline)", "success");
-                        isOfflineMode = true;
-                        unlockWebsiteMainDashboard();
-                    } else {
-                        setLoginMessage("❌ Invalid credentials!", "error");
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = "🔓 Unlock Portal & Sync";
-                        showToast("❌ Login failed!", "error");
-                    }
-                }
-            })
-            .catch(err => {
-                if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
-                    currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                    currentUserRole = systemUsers[userIn].role;
-                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
-                    setLoginMessage("✅ Offline Login Successful!", "success");
-                    showToast("✅ Welcome " + currentActiveTeacher + " (Offline)", "success");
-                    isOfflineMode = true;
-                    unlockWebsiteMainDashboard();
-                } else {
-                    setLoginMessage("❌ Login failed. Check network!", "error");
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "🔓 Unlock Portal & Sync";
-                    showToast("❌ Login failed!", "error");
-                }
-            });
-        }
-
-        function tryCloudSync() {
-            fetch(GOOGLE_SHEET_WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "FETCH_LIVE_DATA" })
-            })
-            .then(res => res.json())
-            .then(response => {
-                if(response.result === "success" && response.data) {
-                    console.log("Cloud sync successful:", response.data.length);
-                    document.getElementById('global_sync_badge').innerText = "☁️ Cloud Synced";
-                    document.getElementById('global_sync_badge').className = "sync-status-badge status-synced";
-                }
-            })
-            .catch(err => {
-                console.log("Cloud sync skipped (offline mode)");
-                document.getElementById('global_sync_badge').innerText = "📡 Offline Mode";
-                document.getElementById('global_sync_badge').className = "sync-status-badge status-offline";
-            });
-        }
-
-        function unlockWebsiteMainDashboard() {
-            document.getElementById("bfsa_login_overlay").style.display = "none";
-            document.getElementById("bfsa_main_app_content").style.display = "block";
-            
-            const submitBtn = document.getElementById("login_submit_btn");
+    // Check cloud
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "LOGIN_CHECK",
+            username: userIn,
+            password: passIn
+        })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(response) {
+        if(response.result === "success" && response.login === true) {
+            currentActiveTeacher = response.teacher || userIn;
+            currentUserRole = response.role || "teacher";
+            document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
+            setLoginMessage("✅ Cloud Login Successful!", "success");
+            showToast("✅ Welcome " + currentActiveTeacher, "success");
+            unlockWebsiteMainDashboard();
+        } else {
+            setLoginMessage("❌ Invalid credentials!", "error");
             submitBtn.disabled = false;
             submitBtn.textContent = "🔓 Unlock Portal & Sync";
-            
-            // Show/Hide Admin features based on role
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                document.getElementById('admin_tab_btn').classList.remove('hidden-tab');
-                document.getElementById('admin_stats_section').classList.add('show');
-                updateAdminStats();
-            } else {
-                document.getElementById('admin_tab_btn').classList.add('hidden-tab');
-                document.getElementById('admin_stats_section').classList.remove('show');
-            }
-            
-            initializeDropdowns();
-            renderStudentList();
-            updateFinancialDashboard();
-            renderUserList();
-            
-            document.getElementById('att_date').value = todayDateStr;
-            document.getElementById('report_daily_date').value = todayDateStr;
-            document.getElementById('test_date').value = todayDateStr;
-            document.getElementById('reg_adm_date').value = todayDateStr;
-            
-            document.getElementById('online_users_section').style.display = 'block';
-            updateOnlineUsers();
-            
-            showToast("🎉 Academy Portal Unlocked!", "success");
+            showToast("❌ Login failed!", "error");
         }
-
-        // ================= ADMIN STATS =================
-        function updateAdminStats() {
-            // Total Students
-            const totalStudents = students.length;
-            document.getElementById('admin_total_students').textContent = totalStudents;
-            document.getElementById('admin_total_students2').textContent = totalStudents;
-
-            // Today's Attendance
-            const today = document.getElementById('att_date').value || todayDateStr;
-            let present = 0, absent = 0;
-            if (dailyAttendanceLog[today]) {
-                students.forEach(s => {
-                    const status = dailyAttendanceLog[today][s.roll] || 'P';
-                    if (status === 'P') present++;
-                    else if (status === 'A') absent++;
-                });
-            } else {
-                // If no attendance taken yet, all are present by default
-                present = students.length;
-            }
-            document.getElementById('admin_present_today').textContent = present;
-            document.getElementById('admin_present_today2').textContent = present;
-            document.getElementById('admin_absent_today').textContent = absent;
-            document.getElementById('admin_absent_today2').textContent = absent;
-
-            // Fees Summary
-            const month = document.getElementById('fee_month')?.value || 'June';
-            const year = document.getElementById('fee_year')?.value || new Date().getFullYear();
-            let monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
-
-            feeTransactions.forEach(t => {
-                const amount = parseFloat(t.amount) || 0;
-                lifetimeTotal += amount;
-                if(t.year == year) yearlyTotal += amount;
-                if(t.month === month && t.year == year) monthlyTotal += amount;
-            });
-
-            document.getElementById('admin_monthly_fees').textContent = "Rs. " + monthlyTotal;
-            document.getElementById('admin_monthly_fees2').textContent = "Rs. " + monthlyTotal;
-            document.getElementById('admin_yearly_fees').textContent = "Rs. " + yearlyTotal;
-            document.getElementById('admin_yearly_fees2').textContent = "Rs. " + yearlyTotal;
-            document.getElementById('admin_lifetime_fees').textContent = "Rs. " + lifetimeTotal;
-            document.getElementById('admin_lifetime_fees2').textContent = "Rs. " + lifetimeTotal;
+    })
+    .catch(function(err) {
+        // Fallback to local
+        if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
+            currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
+            currentUserRole = systemUsers[userIn].role;
+            document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
+            setLoginMessage("✅ Offline Login Successful!", "success");
+            showToast("✅ Welcome " + currentActiveTeacher + " (Offline Mode)", "success");
+            isOfflineMode = true;
+            unlockWebsiteMainDashboard();
+        } else {
+            setLoginMessage("❌ Login failed. Check network!", "error");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🔓 Unlock Portal & Sync";
+            showToast("❌ Login failed!", "error");
         }
+    });
+}
 
-        // ================= USER MANAGEMENT FUNCTIONS =================
-        function renderUserList() {
-            const container = document.getElementById('user_list_container');
-            if (!container) return;
-            
-            let html = '<div style="max-height:200px; overflow-y:auto;">';
-            Object.keys(systemUsers).forEach(username => {
-                const user = systemUsers[username];
-                const isCurrentUser = username === currentActiveTeacher.toLowerCase();
-                html += `
-                    <div class="user-list-item">
-                        <div>
-                            <span class="username">${username}</span>
-                            <span class="role">${user.role} ${isCurrentUser ? '⭐ (You)' : ''}</span>
-                        </div>
-                        <div>
-                            <button class="action-btn btn-warn" onclick="changeUserPassword('${username}')" style="font-size:10px;">Change Pass</button>
-                            ${!isCurrentUser ? `<button class="action-btn btn-del" onclick="deleteUser('${username}')" style="font-size:10px;">Remove</button>` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            container.innerHTML = html;
+function tryCloudSync() {
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "FETCH_LIVE_DATA" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(response) {
+        if(response.result === "success" && response.data) {
+            console.log("Cloud sync successful:", response.data.length);
+            document.getElementById('global_sync_badge').innerText = "☁️ Cloud Synced";
+            document.getElementById('global_sync_badge').className = "sync-status-badge status-synced";
         }
-
-        function addNewUser() {
-            const username = document.getElementById('new_username').value.trim().toLowerCase();
-            const password = document.getElementById('new_password').value.trim();
-            const role = document.getElementById('new_user_role').value;
-
-            if (!username || !password) {
-                showToast("⚠️ Please enter both username and password!", "error");
-                return;
-            }
-
-            if (systemUsers[username]) {
-                showToast("⚠️ Username already exists!", "error");
-                return;
-            }
-
-            systemUsers[username] = { password: password, role: role };
-            localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
-            
-            document.getElementById('new_username').value = '';
-            document.getElementById('new_password').value = '';
-            
-            renderUserList();
-            showToast(`✅ User "${username}" added successfully!`, "success");
-            syncDataToGoogleSheet("ADD_USER", { username, role });
-        }
-
-        function changeUserPassword(username) {
-            const newPass = prompt(`Enter new password for "${username}":`);
-            if (newPass && newPass.length >= 4) {
-                systemUsers[username].password = newPass;
-                localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
-                renderUserList();
-                showToast(`✅ Password changed for "${username}"`, "success");
-            } else if (newPass !== null) {
-                showToast("⚠️ Password must be at least 4 characters!", "error");
-            }
-        }
-
-        function deleteUser(username) {
-            if (username === 'admin') {
-                showToast("⚠️ Cannot delete admin user!", "error");
-                return;
-            }
-            if (confirm(`Remove user "${username}"? They will not be able to login again.`)) {
-                delete systemUsers[username];
-                localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
-                renderUserList();
-                updateOnlineUsers();
-                showToast(`✅ User "${username}" removed successfully!`, "success");
-                syncDataToGoogleSheet("DELETE_USER", { username });
-            }
-        }
-
-        function saveSystemSettings() {
-            const schoolName = document.getElementById('school_name_setting').value.trim();
-            const sheetUrl = document.getElementById('google_sheet_url_setting').value.trim();
-            
-            if (sheetUrl) {
-                GOOGLE_SHEET_WEB_APP_URL = sheetUrl;
-                localStorage.setItem('bfsa_google_sheet_url', sheetUrl);
-            }
-            
-            const header = document.querySelector('.header');
-            if (header) {
-                header.childNodes[0].textContent = schoolName || 'Bright Future Science Academy';
-            }
-            
-            showToast("✅ Settings saved successfully!", "success");
-        }
-
-        function updateOnlineUsers() {
-            const container = document.getElementById('online_users_list');
-            const adminContainer = document.getElementById('admin_online_users');
-            
-            const users = Object.keys(systemUsers);
-            let html = '';
-            users.forEach(u => {
-                const isYou = u === currentActiveTeacher.toLowerCase();
-                html += `<span class="online-user-badge"><span class="dot"></span> ${u.charAt(0).toUpperCase() + u.slice(1)} ${isYou ? '(You)' : ''}</span>`;
-            });
-            
-            if (container) container.innerHTML = html;
-            if (adminContainer) adminContainer.innerHTML = html;
-        }
-
-        // ================= GOOGLE SHEET SYNC =================
-        function syncAllDataToCloud() {
-            showToast("☁️ Syncing all data to cloud...", "info");
-            
-            const fullData = {
-                students: students,
-                fees: feeStatusMap,
-                transactions: feeTransactions,
-                attendance: dailyAttendanceLog,
-                tests: globalTestRecords,
-                holidays: academyHolidays,
-                users: systemUsers
-            };
-
-            syncDataToGoogleSheet("FULL_SYNC", fullData);
-        }
-
-        function syncDataToGoogleSheet(actionType, payloadData) {
-            if (!GOOGLE_SHEET_WEB_APP_URL) {
-                showToast("⚠️ Google Sheet URL not configured!", "warning");
-                return;
-            }
-
-            const badge = document.getElementById('global_sync_badge');
-            if(badge) {
-                badge.innerText = "⏳ Syncing...";
-                badge.className = "sync-status-badge status-pending";
-            }
-
-            const bodyData = {
-                action: actionType,
-                teacher: currentActiveTeacher,
-                timestamp: new Date().toLocaleString(),
-                payload: payloadData
-            };
-
-            fetch(GOOGLE_SHEET_WEB_APP_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(bodyData)
-            })
-            .then(res => res.json())
-            .then((resData) => {
-                if(badge) {
-                    badge.innerText = "☁️ Cloud Synced";
-                    badge.className = "sync-status-badge status-synced";
-                }
-                showToast("✅ Cloud sync completed!", "success");
-            })
-            .catch(err => {
-                console.error("Sync failed:", err);
-                if(badge) {
-                    badge.innerText = "❌ Sync Failed";
-                    badge.className = "sync-status-badge status-error";
-                }
-                showToast("⚠️ Cloud sync failed. Data saved locally.", "warning");
-            });
-        }
-
-        // ================= DROPDOWN INITIALIZATION =================
-        function initializeDropdowns() {
-            const regSel = document.getElementById('reg_class');
-            const dropdownIds = ['filter_class_reg', 'filter_class_att', 'filter_class_fee', 'filter_class_test', 'reg_sheet_class'];
-            const yearSelects = ['fee_year', 'report_year', 'reg_sheet_year'];
-
-            if (regSel) {
-                regSel.innerHTML = '';
-                classCategories.forEach(c => {
-                    regSel.innerHTML += `<option value="${c}">${c}</option>`;
-                });
-            }
-
-            dropdownIds.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    let hasAll = element.querySelector('option[value="All"]');
-                    if (hasAll) {
-                        element.innerHTML = '<option value="All">All Academy Students</option>';
-                    } else {
-                        element.innerHTML = '';
-                    }
-                    classCategories.forEach(c => {
-                        element.innerHTML += `<option value="${c}">${c}</option>`;
-                    });
-                }
-            });
-
-            yearSelects.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.innerHTML = '';
-                    for(let y = 2026; y <= 2050; y++) {
-                        element.innerHTML += `<option value="${y}">${y}</option>`;
-                    }
-                }
-            });
-
-            const feeYear = document.getElementById('fee_year');
-            if(feeYear) feeYear.value = new Date().getFullYear();
-
-            const regSheetYear = document.getElementById('reg_sheet_year');
-            if(regSheetYear) regSheetYear.value = new Date().getFullYear();
-
-            const reportYear = document.getElementById('report_year');
-            if(reportYear) reportYear.value = new Date().getFullYear();
-
-            syncHistorySearchDropdown();
-        }
-
-        function syncHistorySearchDropdown() {
-            const searchDropdown = document.getElementById('history_search_roll');
-            if(!searchDropdown) return;
-            searchDropdown.innerHTML = '<option value="">-- Select Student --</option>';
-            students.forEach(s => {
-                searchDropdown.innerHTML += `<option value="${s.roll}">Roll ${s.roll} - ${s.name} (${s.s_class})</option>`;
-            });
-        }
-
-        // ================= TAB SWITCHING =================
-        function switchTab(tabId) {
-            // Check if trying to access admin tab without permission
-            if (tabId === 'admin' && currentUserRole !== 'admin' && currentUserRole !== 'principal') {
-                showToast("⛔ You don't have permission to access Admin Panel!", "error");
-                return;
-            }
-
-            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => {
-                const btnText = btn.textContent.trim().toLowerCase();
-                if (btnText.includes(tabId) || 
-                    (tabId === 'reports' && btnText.includes('reports')) ||
-                    (tabId === 'admin' && btnText.includes('admin'))) {
-                    btn.classList.add('active');
-                }
-            });
-
-            if(tabId === 'attendance') loadAttendanceTab();
-            if(tabId === 'fees') loadFeesTab();
-            if(tabId === 'tests') loadTestsTab();
-            if(tabId === 'reports') {
-                syncHistorySearchDropdown();
-                generateMonthlyRegisterSheet();
-            }
-            if(tabId === 'admin') {
-                renderUserList();
-                updateOnlineUsers();
-                updateAdminStats();
-            }
-            updateFinancialDashboard();
-        }
-
-        // ================= FINANCIAL DASHBOARD =================
-        function updateFinancialDashboard() {
-            const month = document.getElementById('fee_month')?.value || 'June';
-            const year = document.getElementById('fee_year')?.value || new Date().getFullYear();
-            let monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
-
-            feeTransactions.forEach(t => {
-                const amount = parseFloat(t.amount) || 0;
-                lifetimeTotal += amount;
-                if(t.year == year) yearlyTotal += amount;
-                if(t.month === month && t.year == year) monthlyTotal += amount;
-            });
-
-            document.getElementById('dash_month').innerText = "Rs. " + monthlyTotal;
-            document.getElementById('dash_year').innerText = "Rs. " + yearlyTotal;
-            document.getElementById('dash_life').innerText = "Rs. " + lifetimeTotal;
-            
-            // Update admin stats if visible
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        // ================= STUDENT MANAGEMENT =================
-        function saveStudent() {
-            let roll = document.getElementById('reg_roll').value.trim();
-            let name = document.getElementById('reg_name').value.trim();
-            let s_class = document.getElementById('reg_class').value;
-            let phone = document.getElementById('reg_phone').value.trim();
-            let fee = document.getElementById('reg_fee').value.trim() || "2500";
-            let adm_date = document.getElementById('reg_adm_date').value.trim() || todayDateStr;
-
-            if(!roll || !name || !phone) { 
-                showToast("⚠️ Please fill all fields!", "error");
-                return; 
-            }
-            
-            if(!/^[0-9]{10,15}$/.test(phone.replace(/[^0-9]/g, ''))) {
-                showToast("⚠️ Please enter a valid phone number (10-15 digits)!", "error");
-                return;
-            }
-
-            if(students.some(s => s.roll === roll)) { 
-                showToast("⚠️ Roll Number already exists!", "error");
-                return; 
-            }
-
-            const feeAmount = parseFloat(fee);
-            if(isNaN(feeAmount) || feeAmount < 0) {
-                showToast("⚠️ Please enter a valid fee amount!", "error");
-                return;
-            }
-
-            let newStudent = { roll, name, s_class, phone, custom_fee: fee, admission_date: adm_date };
-            students.push(newStudent);
-            localStorage.setItem('bfsa_students', JSON.stringify(students));
-            
-            document.getElementById('reg_roll').value = '';
-            document.getElementById('reg_name').value = '';
-            document.getElementById('reg_phone').value = '';
-            document.getElementById('reg_adm_date').value = todayDateStr;
-
-            showToast(`✅ ${name} registered successfully!`, "success");
-            renderStudentList();
-            syncHistorySearchDropdown();
-            syncDataToGoogleSheet("ADD_STUDENT", newStudent);
-            
-            // Update admin stats
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        function renderStudentList() {
-            let filter = document.getElementById('filter_class_reg').value;
-            let tbody = document.getElementById('student_list_tbody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            document.getElementById('class_count_display').innerText = "Total: " + filteredList.length;
-
-            filteredList.forEach((s) => {
-                let actualIndex = students.findIndex(st => st.roll === s.roll);
-                let currentCustomFee = s.custom_fee || "2500";
-                let admDate = s.admission_date || "---";
-                tbody.innerHTML += `<tr><td>${s.roll}</td><td>${s.name}</td><td><b>${s.s_class}</b></td><td>${s.phone}</td><td>Rs. ${currentCustomFee}</td><td>${admDate}</td><td><button class="action-btn btn-del" onclick="deleteStudent(${actualIndex})">🗑️</button></td></tr>`;
-            });
-        }
-
-        function deleteStudent(index) {
-            let removedStudent = students[index];
-            if(confirm(`Remove ${removedStudent.name} from academy?`)) {
-                students.splice(index, 1);
-                localStorage.setItem('bfsa_students', JSON.stringify(students));
-                renderStudentList();
-                syncHistorySearchDropdown();
-                syncDataToGoogleSheet("DELETE_STUDENT", { roll: removedStudent.roll, name: removedStudent.name });
-                showToast(`✅ ${removedStudent.name} removed`, "success");
-                
-                if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                    updateAdminStats();
-                }
-            }
-        }
-
-        function clearSystemMemory() {
-            if(confirm("⚠️ This will delete ALL data! Are you sure?")) {
-                if(confirm("⚠️ This action cannot be undone! Continue?")) {
-                    localStorage.clear();
-                    students = []; feeStatusMap = {}; feeTransactions = []; 
-                    dailyAttendanceLog = {}; globalTestRecords = []; academyHolidays = {};
-                    renderStudentList();
-                    updateFinancialDashboard();
-                    syncHistorySearchDropdown();
-                    document.getElementById('printable_pdf_area').style.display = 'none';
-                    document.getElementById('pdf_action_bar').style.display = 'none';
-                    syncDataToGoogleSheet("CLEAR_ALL_DATA", { status: "empty" });
-                    showToast("🎉 System Reset Successful!", "success");
-                    
-                    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                        updateAdminStats();
-                    }
-                }
-            }
-        }
-
-        // ================= ATTENDANCE MANAGEMENT =================
-        function toggleHolidayStatus() {
-            let dateKey = document.getElementById('att_date').value;
-            let reason = document.getElementById('holiday_reason').value.trim() || "Holiday";
-            
-            academyHolidays[dateKey] = reason;
-            localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
-            showToast(`✅ ${dateKey} marked as Holiday`, "success");
-            loadAttendanceTab();
-            syncDataToGoogleSheet("SET_HOLIDAY", { date: dateKey, reason: reason });
-            
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        function removeHolidayStatus() {
-            let dateKey = document.getElementById('att_date').value;
-            if(academyHolidays[dateKey]) {
-                delete academyHolidays[dateKey];
-                localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
-                document.getElementById('holiday_reason').value = '';
-                showToast(`✅ Holiday removed for ${dateKey}`, "success");
-                loadAttendanceTab();
-                syncDataToGoogleSheet("REMOVE_HOLIDAY", { date: dateKey });
-                
-                if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                    updateAdminStats();
-                }
-            } else {
-                showToast("⚠️ No holiday found!", "error");
-            }
-        }
-
-        function loadAttendanceTab() {
-            let filter = document.getElementById('filter_class_att').value;
-            let tbody = document.getElementById('attendance_tbody');
-            let interactiveArea = document.getElementById('attendance_interactive_area');
-            let statusText = document.getElementById('holiday_current_status');
-            let dateKey = document.getElementById('att_date').value;
-            
-            tbody.innerHTML = '';
-
-            if(academyHolidays[dateKey]) {
-                statusText.innerText = `⚠️ HOLIDAY: "${academyHolidays[dateKey]}"`;
-                document.getElementById('holiday_reason').value = academyHolidays[dateKey];
-                interactiveArea.style.opacity = "0.5";
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:orange; font-weight:bold;">📢 Holiday - Attendance blocked</td></tr>';
-                return;
-            } else {
-                statusText.innerText = "✅ Regular Active Day";
-                document.getElementById('holiday_reason').value = '';
-                interactiveArea.style.opacity = "1";
-            }
-            
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            if(filteredList.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; 
-                return; 
-            }
-
-            filteredList.forEach(s => {
-                let savedStatus = (dailyAttendanceLog[dateKey] && dailyAttendanceLog[dateKey][s.roll]) || 'P';
-                if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
-                if(!dailyAttendanceLog[dateKey][s.roll]) dailyAttendanceLog[dateKey][s.roll] = 'P';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${s.roll}</td>
-                        <td>${s.name} <small>(${s.s_class})</small></td>
-                        <td>
-                            <select id="att_${s.roll}" onchange="saveIndividualAttendanceStatus('${s.roll}')">
-                                <option value="P" ${savedStatus === 'P' ? 'selected' : ''}>✅ Present</option>
-                                <option value="A" ${savedStatus === 'A' ? 'selected' : ''}>❌ Absent</option>
-                            </select>
-                        </td>
-                        <td><button class="action-btn btn-wa" onclick="sendSingleAbsentSMS('${s.roll}')">📱 WhatsApp</button></td>
-                    </tr>`;
-            });
-            localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
-            
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        function saveIndividualAttendanceStatus(roll) {
-            let dateKey = document.getElementById('att_date').value;
-            if(academyHolidays[dateKey]) return; 
-            let status = document.getElementById(`att_${roll}`).value;
-            if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
-            dailyAttendanceLog[dateKey][roll] = status;
-            localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
-
-            let s = students.find(st => st.roll === roll) || { name: "Unknown" };
-            syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, status: status });
-            
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        // ================= WHATSAPP FUNCTIONS (URDU + ENGLISH) =================
-        function sendWhatsApp(phone, text) {
-            let cleanPhone = phone.replace(/[^0-9]/g, '');
-            if(cleanPhone.startsWith('03')) cleanPhone = '92' + cleanPhone.substring(1);
-            if(!cleanPhone.startsWith('92')) cleanPhone = '92' + cleanPhone;
-            let url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(text);
-            window.open(url, '_blank');
-        }
-
-        function processNextSMSQueue() {
-            if (smsQueue.length === 0) {
-                showToast("🎉 All bulk messages processed!", "success");
-                return;
-            }
-            let item = smsQueue.shift();
-            if(confirm(`Send WhatsApp to ${item.name}?`)) {
-                sendWhatsApp(item.phone, item.msg);
-                setTimeout(() => { processNextSMSQueue(); }, 3000);
-            } else {
-                showToast("⚠️ Bulk messaging stopped.", "warning");
-                smsQueue = [];
-            }
-        }
-
-        // ================= SINGLE ABSENT SMS (URDU + ENGLISH) =================
-        function sendSingleAbsentSMS(roll) {
-            let dateKey = document.getElementById('att_date').value;
-            if(academyHolidays[dateKey]) { 
-                showToast("⚠️ Holiday - SMS not allowed!", "error");
-                return; 
-            }
-            saveIndividualAttendanceStatus(roll); 
-            let status = document.getElementById(`att_${roll}`).value;
-            if(status === 'P') { 
-                showToast("❌ Student is Present!", "error");
-                return; 
-            }
-            let s = students.find(st => st.roll === roll);
-            if(!s) { showToast("⚠️ Student not found!", "error"); return; }
-            
-            let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج مورخہ *${dateKey}* کو اکیڈمی میں **غیر حاضر** ہیں۔
-
-برائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-This is to inform you that your child *${s.name}* (Roll No: ${s.roll}, Class: ${s.s_class}) is **ABSENT** from academy today *${dateKey}*.
-
-Please inform the reason for absence.
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-            
-            sendWhatsApp(s.phone, msg);
-            showToast(`✅ SMS sent to ${s.name}`, "success");
-        }
-
-        // ================= BULK ABSENT SMS (URDU + ENGLISH) =================
-        function startBulkAttendanceSMS() {
-            let dateKey = document.getElementById('att_date').value;
-            if(academyHolidays[dateKey]) { 
-                showToast("⚠️ Holiday - Bulk SMS disabled!", "error");
-                return; 
-            }
-            let filter = document.getElementById('filter_class_att').value;
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            smsQueue = []; 
-
-            filteredList.forEach(s => {
-                saveIndividualAttendanceStatus(s.roll); 
-                let statusSelect = document.getElementById(`att_${s.roll}`);
-                if(statusSelect && statusSelect.value === 'A') {
-                    let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}، کلاس: ${s.s_class}) آج مورخہ *${dateKey}* کو اکیڈمی میں **غیر حاضر** ہیں۔
-
-برائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-This is to inform you that your child *${s.name}* (Roll No: ${s.roll}, Class: ${s.s_class}) is **ABSENT** from academy today *${dateKey}*.
-
-Please inform the reason for absence.
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-                    
-                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
-                }
-            });
-
-            if(smsQueue.length === 0) { 
-                showToast("⚠️ No absent students found!", "warning");
-                return; 
-            }
-            showToast(`📱 Sending ${smsQueue.length} messages...`, "info");
-            processNextSMSQueue();
-        }
-
-        // ================= FEES MANAGEMENT =================
-        function loadFeesTab() {
-            let month = document.getElementById('fee_month').value;
-            let year = document.getElementById('fee_year').value;
-            let filter = document.getElementById('filter_class_fee').value;
-            let tbody = document.getElementById('fees_tbody');
-            tbody.innerHTML = '';
-
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            if(filteredList.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No records found.</td></tr>'; 
-                return; 
-            }
-
-            filteredList.forEach(s => {
-                let key = `${s.roll}_${month}_${year}`;
-                let status = feeStatusMap[key] || 'Unpaid';
-                let statusColor = status === 'Paid' ? 'green' : 'red';
-                let statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
-                let studentFeeAmt = s.custom_fee || "2500"; 
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${s.roll}</td>
-                        <td>${s.name} <small>(${s.s_class})</small></td>
-                        <td><b>Rs. ${studentFeeAmt}</b></td>
-                        <td style="color:${statusColor}; font-weight:bold;">${statusText}</td>
-                        <td>
-                            <button class="action-btn btn-pay" onclick="markFeePaid('${s.roll}', '${month}', '${year}')">✅ Received</button>
-                            <button class="action-btn btn-warn" onclick="sendSingleFeeWarning('${s.roll}', '${month}', '${year}')">📱 Remind</button>
-                        </td>
-                    </tr>`;
-            });
-            updateFinancialDashboard();
-        }
-
-        // ================= MARK FEE PAID (URDU + ENGLISH) =================
-        function markFeePaid(roll, month, year) {
-            let key = `${roll}_${month}_${year}`;
-            if(feeStatusMap[key] === 'Paid') { 
-                showToast("⚠️ Fee already paid!", "warning");
-                return; 
-            }
-            
-            let s = students.find(st => st.roll === roll);
-            if(!s) { showToast("⚠️ Student not found!", "error"); return; }
-            
-            let studentFeeAmt = parseFloat(s.custom_fee) || 2500;
-            if(studentFeeAmt <= 0) {
-                showToast("⚠️ Invalid fee amount!", "error");
-                return;
-            }
-            
-            let liveTime = getLiveTime();
-
-            feeStatusMap[key] = 'Paid';
-            localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
-            
-            let transactionObj = { 
-                roll: roll, 
-                month: month, 
-                year: year, 
-                amount: studentFeeAmt, 
-                dateAdded: todayDateStr, 
-                timeAdded: liveTime 
-            };
-            feeTransactions.push(transactionObj);
-            localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
-
-            let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* موصول ہو چکی ہے۔
-
-آپ کا شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* has been received.
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-            
-            sendWhatsApp(s.phone, msg);
-            loadFeesTab();
-            showToast(`✅ Fee collected from ${s.name}`, "success");
-            syncDataToGoogleSheet("COLLECT_FEE", { 
-                roll, 
-                name: s.name, 
-                month, 
-                year, 
-                amount: studentFeeAmt 
-            });
-            
-            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                updateAdminStats();
-            }
-        }
-
-        // ================= SINGLE FEE REMINDER (URDU + ENGLISH) =================
-        function sendSingleFeeWarning(roll, month, year) {
-            let key = `${roll}_${month}_${year}`;
-            if(feeStatusMap[key] === 'Paid') { 
-                showToast("⚠️ Fee already paid!", "warning");
-                return; 
-            }
-            let s = students.find(st => st.roll === roll);
-            if(!s) { showToast("⚠️ Student not found!", "error"); return; }
-            
-            let studentFeeAmt = s.custom_fee || "2500";
-            let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* **واجب الادا** ہے۔
-
-برائے مہربانی تاریخ *18-${month}-${year}* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* is **PENDING**.
-
-Please submit the fee before *18-${month}-${year}* to avoid **late fee** charges.
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-            
-            sendWhatsApp(s.phone, msg);
-            showToast(`✅ Reminder sent to ${s.name}`, "success");
-        }
-
-        // ================= BULK FEE REMINDER (URDU + ENGLISH) =================
-        function startBulkFeeWarningSMS() {
-            let month = document.getElementById('fee_month').value;
-            let year = document.getElementById('fee_year').value;
-            let filter = document.getElementById('filter_class_fee').value;
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            smsQueue = [];
-
-            filteredList.forEach(s => {
-                let key = `${s.roll}_${month}_${year}`;
-                let status = feeStatusMap[key] || 'Unpaid';
-                let studentFeeAmt = s.custom_fee || "2500";
-                if(status === 'Unpaid') {
-                    let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کی ماہانہ فیس بابت مہینہ *${month}-${year}* کی رقم مبلغ *${studentFeeAmt} روپے* **واجب الادا** ہے۔
-
-برائے مہربانی تاریخ *18-${month}-${year}* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-This is to inform you that the monthly fee of *${s.name}* (Roll No: ${s.roll}) for the month of *${month}-${year}* amounting to *Rs. ${studentFeeAmt}* is **PENDING**.
-
-Please submit the fee before *18-${month}-${year}* to avoid **late fee** charges.
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-                    
-                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
-                }
-            });
-            
-            if(smsQueue.length === 0) { 
-                showToast("⚠️ All fees are paid!", "warning");
-                return; 
-            }
-            showToast(`📱 Sending ${smsQueue.length} reminders...`, "info");
-            processNextSMSQueue();
-        }
-
-        // ================= TEST MARKS MANAGEMENT =================
-        function loadTestsTab() {
-            let filter = document.getElementById('filter_class_test').value;
-            let tbody = document.getElementById('tests_tbody');
-            tbody.innerHTML = '';
-            
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            if(filteredList.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; 
-                return; 
-            }
-
-            filteredList.forEach(s => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${s.roll}</td>
-                        <td>${s.name} <small>(${s.s_class})</small></td>
-                        <td><input type="number" id="marks_${s.roll}" placeholder="N/E" style="width:70px; text-align:center;" min="0"></td>
-                        <td><button class="action-btn btn-wa" onclick="sendSingleTestMarkSMS('${s.roll}')">📱 Send & Save</button></td>
-                    </tr>`;
-            });
-        }
-
-        function saveTestRecordDirectly(roll, subject, total, obt) {
-            let tDate = document.getElementById('test_date').value.trim();
-            globalTestRecords = globalTestRecords.filter(r => !(r.roll === roll && r.subject === subject && r.date === tDate));
-            
-            let testObj = { roll: roll, date: tDate, subject: subject, total: parseInt(total), obtained: parseInt(obt) };
-            globalTestRecords.push(testObj);
-            localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
-
-            let s = students.find(st => st.roll === roll) || { name: "Unknown" };
-            syncDataToGoogleSheet("SAVE_TEST_MARK", { date: tDate, roll, name: s.name, subject, total, obtained: obt });
-        }
-
-        // ================= SINGLE TEST MARK SMS (URDU + ENGLISH) =================
-        function sendSingleTestMarkSMS(roll) {
-            let s = students.find(st => st.roll === roll);
-            if(!s) { showToast("⚠️ Student not found!", "error"); return; }
-            
-            let subject = document.getElementById('test_subject').value.trim();
-            let total = document.getElementById('test_total').value.trim();
-            let marksInput = document.getElementById(`marks_${roll}`);
-            let obt = marksInput?.value.trim();
-
-            if(obt === "") { 
-                showToast(`❌ Marks empty for ${s.name}!`, "error");
-                return; 
-            }
-
-            if(!subject || !total) { 
-                showToast("⚠️ Subject and Total marks required!", "error");
-                return; 
-            }
-            
-            saveTestRecordDirectly(roll, subject, total, obt);
-            
-            let perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
-            let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کا مضمون *${subject}* کا ٹیسٹ رزلٹ آ گیا ہے۔
-
-📝 کل نمبر: ${total}
-✅ حاصل کردہ نمبر: ${obt}
-📊 فیصد: ${perc}%
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-Test result for your child *${s.name}* (Roll No: ${s.roll}) is now available.
-
-📝 Subject: ${subject}
-✅ Total Marks: ${total}
-✅ Obtained Marks: ${obt}
-📊 Percentage: ${perc}%
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-            
-            sendWhatsApp(s.phone, msg);
-            showToast(`✅ Test marks sent to ${s.name}`, "success");
-        }
-
-        // ================= BULK TEST MARKS SMS (URDU + ENGLISH) =================
-        function startBulkTestMarksSMS() {
-            let filter = document.getElementById('filter_class_test').value;
-            let subject = document.getElementById('test_subject').value.trim();
-            let total = document.getElementById('test_total').value.trim();
-            
-            if(!subject || !total) { 
-                showToast("⚠️ Subject and Total marks required!", "error");
-                return; 
-            }
-
-            let filteredList = filter === 'All' ? students : students.filter(s => s.s_class === filter);
-            smsQueue = [];
-
-            filteredList.forEach(s => {
-                let marksInput = document.getElementById(`marks_${s.roll}`);
-                let obt = marksInput ? marksInput.value.trim() : "";
-                
-                if (obt !== "") {
-                    saveTestRecordDirectly(s.roll, subject, total, obt);
-                    
-                    let perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
-                    let msg = `السلام علیکم! محترم والدین صاحب،
-
-برائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *${s.name}* (رول نمبر: ${s.roll}) کا مضمون *${subject}* کا ٹیسٹ رزلٹ آ گیا ہے۔
-
-📝 کل نمبر: ${total}
-✅ حاصل کردہ نمبر: ${obt}
-📊 فیصد: ${perc}%
-
-شکریہ!
-برائٹ فیوچر سائنس اکیڈمی
-
----
-Dear Parent,
-
-Test result for your child *${s.name}* (Roll No: ${s.roll}) is now available.
-
-📝 Subject: ${subject}
-✅ Total Marks: ${total}
-✅ Obtained Marks: ${obt}
-📊 Percentage: ${perc}%
-
-Thank you!
-Bright Future Science Academy
-📞 0300-1234567`;
-                    
-                    smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
-                }
-            });
-
-            if(smsQueue.length === 0) { 
-                showToast("⚠️ No marks entered!", "warning");
-                return; 
-            }
-            showToast(`📱 Sending ${smsQueue.length} results...`, "info");
-            processNextSMSQueue();
-        }
-
-        // ================= PDF REPORT GENERATION =================
-        function printStudentReport() {
-            const pdfArea = document.getElementById('printable_pdf_area');
-            if (!pdfArea || pdfArea.style.display === 'none') {
-                showToast("⚠️ Please select a student first!", "error");
-                return;
-            }
-            
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
-            if (!printWindow) {
-                showToast("⚠️ Please allow popups!", "error");
-                return;
-            }
-            
-            const content = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Student Report Card</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        .pdf-report-card { max-width: 800px; margin: 0 auto; }
-                        .pdf-header { text-align: center; border-bottom: 3px double #1B365D; padding-bottom: 15px; margin-bottom: 20px; }
-                        .pdf-header h2 { color: #1B365D; margin: 0; }
-                        .pdf-student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-                        .pdf-info-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #ddd; }
-                        .pdf-section-title { background: #1B365D; color: white; padding: 5px 10px; margin: 15px 0 10px 0; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                        th { background: #eef2f7; }
-                        .pdf-footer-note { text-align: center; font-size: 11px; color: #777; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }
-                        @media print { .no-print { display: none; } body { padding: 0; } }
-                    </style>
-                </head>
-                <body>
-                    ${pdfArea.innerHTML}
-                    <div style="text-align:center; margin-top:20px;">
-                        <button onclick="window.print()" style="padding:10px 20px; background:#17a2b8; color:white; border:none; border-radius:5px; cursor:pointer;">🖨️ Print / PDF</button>
-                        <button onclick="window.close()" style="padding:10px 20px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px;">Close</button>
-                    </div>
-                    <script>setTimeout(() => window.print(), 1000);<\/script>
-                </body>
-                </html>
-            `;
-            
-            printWindow.document.write(content);
-            printWindow.document.close();
-        }
-
-        function generateStudentLifetimeProfile() {
-            let roll = document.getElementById('history_search_roll').value;
-            let pdfArea = document.getElementById('printable_pdf_area');
-            let actionBtn = document.getElementById('pdf_action_bar');
-            
-            if(!roll) {
-                pdfArea.style.display = 'none';
-                actionBtn.style.display = 'none';
-                return;
-            }
-
-            let s = students.find(st => st.roll === roll);
-            if(!s) { 
-                showToast("⚠️ Student not found!", "error");
-                return; 
-            }
-
-            pdfArea.style.display = 'block';
-            actionBtn.style.display = 'block';
-
-            document.getElementById('pdf_student_name').innerText = s.name;
-            document.getElementById('pdf_roll_no').innerText = s.roll;
-            document.getElementById('pdf_class').innerText = s.s_class;
-            document.getElementById('pdf_phone').innerText = s.phone;
-            document.getElementById('pdf_admission_date').innerText = s.admission_date || "---";
-            document.getElementById('pdf_live_generation_date').innerText = todayDateStr + " " + getLiveTime();
-
-            // Attendance
-            let attTbody = document.getElementById('pdf_attendance_tbody');
-            attTbody.innerHTML = '';
-            let monthlyAttStats = {}; 
-            
-            Object.keys(dailyAttendanceLog).forEach(dateKey => {
-                if(academyHolidays[dateKey]) return;
-                let parts = dateKey.split('-');
-                if(parts.length === 3) {
-                    let monthYear = parts[1] + "-" + parts[2]; 
-                    if(dailyAttendanceLog[dateKey][roll]) {
-                        let status = dailyAttendanceLog[dateKey][roll];
-                        if(!monthlyAttStats[monthYear]) monthlyAttStats[monthYear] = { P: 0, A: 0 };
-                        if(status === 'P') monthlyAttStats[monthYear].P++;
-                        if(status === 'A') monthlyAttStats[monthYear].A++;
-                    }
-                }
-            });
-
-            let attKeys = Object.keys(monthlyAttStats);
-            if(attKeys.length === 0) {
-                attTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No attendance data</td></tr>";
-            } else {
-                attKeys.forEach(my => {
-                    let p = monthlyAttStats[my].P;
-                    let a = monthlyAttStats[my].A;
-                    let total = p + a;
-                    let percentage = total > 0 ? ((p / total) * 100).toFixed(0) : 0;
-                    attTbody.innerHTML += `
-                        <tr>
-                            <td><b>${my}</b></td>
-                            <td>${total}</td>
-                            <td style="color:green;">${p}</td>
-                            <td style="color:red;">${a}</td>
-                            <td><b>${percentage}%</b></td>
-                        </tr>`;
-                });
-            }
-
-            // Fees
-            let feesTbody = document.getElementById('pdf_fees_tbody');
-            feesTbody.innerHTML = '';
-            let billingMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            let feeRowsCount = 0;
-            let studentFeeAmt = s.custom_fee || "2500";
-
-            billingMonths.forEach(m => {
-                for(let y = 2026; y <= 2050; y++) {
-                    let key = `${roll}_${m}_${y}`;
-                    if(feeStatusMap[key]) {
-                        feeRowsCount++;
-                        let status = feeStatusMap[key];
-                        let txInfo = feeTransactions.find(t => t.roll === roll && t.month === m && t.year == y);
-                        let timestampStr = txInfo ? `${txInfo.dateAdded} (${txInfo.timeAdded || ''})` : '---';
-                        let statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
-                        feesTbody.innerHTML += `
-                            <tr>
-                                <td>${m} ${y}</td>
-                                <td>Rs. ${studentFeeAmt}</td>
-                                <td style="color:${status === 'Paid' ? 'green' : 'red'}; font-weight:bold;">${statusText}</td>
-                                <td>${timestampStr}</td>
-                            </tr>`;
-                    }
-                }
-            });
-
-            if(feeRowsCount === 0) { 
-                feesTbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color:gray;'>No fee records</td></tr>"; 
-            }
-
-            // Tests
-            let testTbody = document.getElementById('pdf_tests_tbody');
-            testTbody.innerHTML = '';
-            let sTests = globalTestRecords.filter(t => t.roll === roll);
-            
-            if(sTests.length === 0) {
-                testTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No test records</td></tr>";
-            } else {
-                sTests.sort((a,b) => b.date.localeCompare(a.date));
-                sTests.forEach(t => {
-                    let perc = t.total > 0 ? ((t.obtained / t.total) * 100).toFixed(0) : 0;
-                    testTbody.innerHTML += `
-                        <tr>
-                            <td>${t.date}</td>
-                            <td><b>${t.subject}</b></td>
-                            <td>${t.total}</td>
-                            <td><b>${t.obtained}</b></td>
-                            <td style="font-weight:bold; color:${perc >= 40 ? 'green' : 'red'};">${perc}%</td>
-                        </tr>`;
-                });
-            }
-        }
-
-        // ================= MONTHLY REGISTER SHEET =================
-        function generateMonthlyRegisterSheet() {
-            let selectedClass = document.getElementById('reg_sheet_class').value;
-            let month = document.getElementById('reg_sheet_month').value; 
-            let year = document.getElementById('reg_sheet_year').value; 
-            let table = document.getElementById('register_sheet_table');
-            
-            if(!table) return;
-            table.innerHTML = '';
-
-            let filteredStudents = selectedClass === 'All' ? students : students.filter(s => s.s_class === selectedClass);
-            if(filteredStudents.length === 0) {
-                table.innerHTML = "<tr><td style='color:red; padding:10px;'>No students in this class.</td></tr>";
-                return;
-            }
-
-            let daysInMonth = new Date(year, parseInt(month), 0).getDate();
-
-            let headerHtml = `<tr><th>Roll</th><th>Student Name</th><th>Class</th>`;
-            for(let d = 1; d <= daysInMonth; d++) {
-                headerHtml += `<th>${d}</th>`;
-            }
-            headerHtml += `</tr>`;
-            table.innerHTML += headerHtml;
-
-            filteredStudents.forEach(s => {
-                let rowHtml = `<tr><td><b>${s.roll}</b></td><td><b>${s.name}</b></td><td><small>${s.s_class}</small></td>`;
-                
-                for(let d = 1; d <= daysInMonth; d++) {
-                    let dayStr = d < 10 ? '0' + d : d;
-                    let checkDateKey = `${dayStr}-${month}-${year}`;
-                    
-                    if(academyHolidays[checkDateKey]) {
-                        let reasonText = academyHolidays[checkDateKey];
-                        rowHtml += `<td class="h-cell" title="${reasonText}">${reasonText}</td>`;
-                    } else {
-                        let dayStatus = 'empty';
-                        if(dailyAttendanceLog[checkDateKey] && dailyAttendanceLog[checkDateKey][s.roll]) {
-                            dayStatus = dailyAttendanceLog[checkDateKey][s.roll];
-                        }
-
-                        if(dayStatus === 'P') {
-                            rowHtml += `<td class="p-cell">P</td>`;
-                        } else if(dayStatus === 'A') {
-                            rowHtml += `<td class="a-cell">A</td>`;
-                        } else {
-                            rowHtml += `<td class="empty-cell">-</td>`;
-                        }
-                    }
-                }
-                rowHtml += `</tr>`;
-                table.innerHTML += rowHtml;
-            });
-        }
-
-        // ================= BACKUP SYSTEM =================
-        function exportAcademyBackupFile() {
-            if(students.length === 0 && feeTransactions.length === 0) {
-                showToast("❌ No data to backup!", "error");
-                return;
-            }
-            
-            let backupMasterObject = {
-                version: "2.0",
-                students: students,
-                fees: feeStatusMap,
-                transactions: feeTransactions,
-                attendance: dailyAttendanceLog,
-                tests: globalTestRecords,
-                holidays: academyHolidays,
-                users: systemUsers,
-                backupDate: todayDateStr,
-                backupTime: getLiveTime(),
-                totalStudents: students.length,
-                totalTransactions: feeTransactions.length
-            };
-
-            let jsonString = JSON.stringify(backupMasterObject, null, 2);
-            let blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
-            let downloadLink = document.createElement("a");
-            
-            let formattedFileDate = todayDateStr.replace(/-/g, '_');
-            downloadLink.download = `bfsa_full_backup_${formattedFileDate}.json`;
-            downloadLink.href = window.URL.createObjectURL(blob);
-            downloadLink.style.display = "none";
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-            
-            showToast(`📥 Backup downloaded! (${students.length} students)`, "success");
-            syncDataToGoogleSheet("EXPORT_BACKUP", { totalStudents: students.length });
-        }
-
-        function importAcademyBackupFile(inputElement) {
-            let file = inputElement.files[0];
-            if (!file) {
-                showToast("⚠️ Please select a backup file!", "error");
-                return;
-            }
-
-            if (!confirm(`⚠️ Importing "${file.name}" will REPLACE all current data! Continue?`)) {
-                return;
-            }
-
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    let parsedData = JSON.parse(e.target.result);
-                    
-                    if (parsedData.students !== undefined) {
-                        students = parsedData.students || [];
-                        feeStatusMap = parsedData.fees || {};
-                        feeTransactions = parsedData.transactions || [];
-                        dailyAttendanceLog = parsedData.attendance || {};
-                        globalTestRecords = parsedData.tests || [];
-                        academyHolidays = parsedData.holidays || {};
-                        if (parsedData.users) systemUsers = parsedData.users;
-
-                        localStorage.setItem('bfsa_students', JSON.stringify(students));
-                        localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
-                        localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
-                        localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
-                        localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
-                        localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
-                        localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
-
-                        showToast(`📤 Data Restored! ${students.length} students loaded.`, "success");
-                        
-                        renderStudentList();
-                        updateFinancialDashboard();
-                        syncHistorySearchDropdown();
-                        loadAttendanceTab();
-                        generateMonthlyRegisterSheet();
-                        renderUserList();
-                        updateOnlineUsers();
-
-                        if (currentUserRole === 'admin' || currentUserRole === 'principal') {
-                            updateAdminStats();
-                        }
-
-                        syncDataToGoogleSheet("RESTORE_BACKUP", { 
-                            totalStudents: students.length,
-                            backupDate: parsedData.backupDate || "unknown"
-                        });
-                    } else {
-                        showToast("❌ Invalid backup file format!", "error");
-                    }
-                } catch (err) {
-                    showToast("❌ Error reading file. Invalid JSON.", "error");
-                    console.error("Import error:", err);
-                }
-            };
-            reader.readAsText(file);
-            inputElement.value = '';
-        }
-
-        // ================= INITIALIZATION =================
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateFields = ['att_date', 'report_daily_date', 'test_date', 'reg_adm_date'];
-            dateFields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = todayDateStr;
-            });
-
-            const schoolName = document.getElementById('school_name_setting');
-            if (schoolName) {
-                const savedName = localStorage.getItem('bfsa_school_name');
-                if (savedName) schoolName.value = savedName;
-            }
-
-            const sheetUrl = document.getElementById('google_sheet_url_setting');
-            if (sheetUrl) {
-                const savedUrl = localStorage.getItem('bfsa_google_sheet_url');
-                if (savedUrl) sheetUrl.value = savedUrl;
-            }
-
-            if (window.location.search.includes('autologin')) {
-                setTimeout(() => executeSecurePortalLogin(), 500);
-            }
-
-            console.log("✅ Bright Future Science Academy v2.0 loaded!");
-            console.log(`📊 Students: ${students.length}, Teachers: ${Object.keys(systemUsers).length}`);
+    })
+    .catch(function(err) {
+        console.log("Cloud sync skipped (offline mode)");
+        document.getElementById('global_sync_badge').innerText = "📡 Offline Mode";
+        document.getElementById('global_sync_badge').className = "sync-status-badge status-offline";
+    });
+}
+
+function unlockWebsiteMainDashboard() {
+    document.getElementById("bfsa_login_overlay").style.display = "none";
+    document.getElementById("bfsa_main_app_content").style.display = "block";
+    
+    var submitBtn = document.getElementById("login_submit_btn");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "🔓 Unlock Portal & Sync";
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        document.getElementById('admin_tab_btn').classList.remove('hidden-tab');
+        document.getElementById('admin_stats_section').classList.add('show');
+        updateAdminStats();
+    } else {
+        document.getElementById('admin_tab_btn').classList.add('hidden-tab');
+        document.getElementById('admin_stats_section').classList.remove('show');
+    }
+    
+    initializeDropdowns();
+    renderStudentList();
+    updateFinancialDashboard();
+    renderUserList();
+    
+    document.getElementById('att_date').value = todayDateStr;
+    document.getElementById('report_daily_date').value = todayDateStr;
+    document.getElementById('test_date').value = todayDateStr;
+    document.getElementById('reg_adm_date').value = todayDateStr;
+    
+    document.getElementById('online_users_section').style.display = 'block';
+    updateOnlineUsers();
+    
+    showToast("🎉 Academy Portal Unlocked! Data is safe in Google Sheets.", "success");
+}
+
+// ================= ADMIN STATS =================
+function updateAdminStats() {
+    var totalStudents = students.length;
+    document.getElementById('admin_total_students').textContent = totalStudents;
+    document.getElementById('admin_total_students2').textContent = totalStudents;
+
+    var today = document.getElementById('att_date').value || todayDateStr;
+    var present = 0, absent = 0;
+    if (dailyAttendanceLog[today]) {
+        students.forEach(function(s) {
+            var status = dailyAttendanceLog[today][s.roll] || 'P';
+            if (status === 'P') present++;
+            else if (status === 'A') absent++;
         });
-    </script>
+    } else {
+        present = students.length;
+    }
+    document.getElementById('admin_present_today').textContent = present;
+    document.getElementById('admin_present_today2').textContent = present;
+    document.getElementById('admin_absent_today').textContent = absent;
+    document.getElementById('admin_absent_today2').textContent = absent;
+
+    var month = document.getElementById('fee_month') ? document.getElementById('fee_month').value : 'June';
+    var year = document.getElementById('fee_year') ? document.getElementById('fee_year').value : new Date().getFullYear();
+    var monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
+
+    feeTransactions.forEach(function(t) {
+        var amount = parseFloat(t.amount) || 0;
+        lifetimeTotal += amount;
+        if(t.year == year) yearlyTotal += amount;
+        if(t.month === month && t.year == year) monthlyTotal += amount;
+    });
+
+    document.getElementById('admin_monthly_fees').textContent = "Rs. " + monthlyTotal;
+    document.getElementById('admin_monthly_fees2').textContent = "Rs. " + monthlyTotal;
+    document.getElementById('admin_yearly_fees').textContent = "Rs. " + yearlyTotal;
+    document.getElementById('admin_yearly_fees2').textContent = "Rs. " + yearlyTotal;
+    document.getElementById('admin_lifetime_fees').textContent = "Rs. " + lifetimeTotal;
+    document.getElementById('admin_lifetime_fees2').textContent = "Rs. " + lifetimeTotal;
+}
+
+// ================= USER MANAGEMENT =================
+function renderUserList() {
+    var container = document.getElementById('user_list_container');
+    if (!container) return;
+    
+    var html = '<div style="max-height:200px; overflow-y:auto;">';
+    for (var username in systemUsers) {
+        var user = systemUsers[username];
+        var isCurrentUser = username === currentActiveTeacher.toLowerCase();
+        html += '<div class="user-list-item">';
+        html += '<div><span class="username">' + username + '</span><span class="role"> ' + user.role + (isCurrentUser ? ' ⭐ (You)' : '') + '</span></div>';
+        html += '<div>';
+        html += '<button class="action-btn btn-warn" onclick="changeUserPassword(\'' + username + '\')" style="font-size:10px;">Change Pass</button>';
+        if (!isCurrentUser) {
+            html += '<button class="action-btn btn-del" onclick="deleteUser(\'' + username + '\')" style="font-size:10px;">Remove</button>';
+        }
+        html += '</div></div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function addNewUser() {
+    var username = document.getElementById('new_username').value.trim().toLowerCase();
+    var password = document.getElementById('new_password').value.trim();
+    var role = document.getElementById('new_user_role').value;
+
+    if (!username || !password) {
+        showToast("⚠️ Please enter both username and password!", "error");
+        return;
+    }
+
+    if (systemUsers[username]) {
+        showToast("⚠️ Username already exists!", "error");
+        return;
+    }
+
+    systemUsers[username] = { password: password, role: role };
+    localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
+    
+    document.getElementById('new_username').value = '';
+    document.getElementById('new_password').value = '';
+    
+    renderUserList();
+    showToast("✅ User '" + username + "' added successfully!", "success");
+    syncDataToGoogleSheet("ADD_USER", { username: username, role: role });
+}
+
+function changeUserPassword(username) {
+    var newPass = prompt("Enter new password for '" + username + "':");
+    if (newPass && newPass.length >= 4) {
+        systemUsers[username].password = newPass;
+        localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
+        renderUserList();
+        showToast("✅ Password changed for '" + username + "'", "success");
+    } else if (newPass !== null) {
+        showToast("⚠️ Password must be at least 4 characters!", "error");
+    }
+}
+
+function deleteUser(username) {
+    if (username === 'admin') {
+        showToast("⚠️ Cannot delete admin user!", "error");
+        return;
+    }
+    if (confirm("Remove user '" + username + "'? They will not be able to login again.")) {
+        delete systemUsers[username];
+        localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
+        renderUserList();
+        updateOnlineUsers();
+        showToast("✅ User '" + username + "' removed successfully!", "success");
+        syncDataToGoogleSheet("DELETE_USER", { username: username });
+    }
+}
+
+function saveSystemSettings() {
+    var schoolName = document.getElementById('school_name_setting').value.trim();
+    var sheetUrl = document.getElementById('google_sheet_url_setting').value.trim();
+    
+    if (sheetUrl) {
+        GOOGLE_SHEET_WEB_APP_URL = sheetUrl;
+        localStorage.setItem('bfsa_google_sheet_url', sheetUrl);
+    }
+    
+    var header = document.querySelector('.header');
+    if (header) {
+        header.childNodes[0].textContent = schoolName || 'Bright Future Science Academy';
+    }
+    
+    showToast("✅ Settings saved successfully!", "success");
+}
+
+function updateOnlineUsers() {
+    var container = document.getElementById('online_users_list');
+    var adminContainer = document.getElementById('admin_online_users');
+    
+    var html = '';
+    for (var u in systemUsers) {
+        var isYou = u === currentActiveTeacher.toLowerCase();
+        html += '<span class="online-user-badge"><span class="dot"></span> ' + u.charAt(0).toUpperCase() + u.slice(1) + (isYou ? ' (You)' : '') + '</span>';
+    }
+    
+    if (container) container.innerHTML = html;
+    if (adminContainer) adminContainer.innerHTML = html;
+}
+
+// ================= GOOGLE SHEET SYNC =================
+function syncAllDataToCloud() {
+    showToast("☁️ Syncing all data to Google Sheets...", "info");
+    
+    var fullData = {
+        students: students,
+        fees: feeStatusMap,
+        transactions: feeTransactions,
+        attendance: dailyAttendanceLog,
+        tests: globalTestRecords,
+        holidays: academyHolidays,
+        users: systemUsers
+    };
+
+    syncDataToGoogleSheet("FULL_SYNC", fullData);
+}
+
+function syncDataToGoogleSheet(actionType, payloadData) {
+    var badge = document.getElementById('global_sync_badge');
+    if(badge) {
+        badge.innerText = "⏳ Syncing...";
+        badge.className = "sync-status-badge status-pending";
+    }
+
+    var bodyData = {
+        action: actionType,
+        teacher: currentActiveTeacher,
+        timestamp: new Date().toLocaleString(),
+        payload: payloadData
+    };
+
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(bodyData)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(resData) {
+        if(badge) {
+            badge.innerText = "☁️ Cloud Synced";
+            badge.className = "sync-status-badge status-synced";
+        }
+        showToast("✅ Data synced to Google Sheets successfully!", "success");
+    })
+    .catch(function(err) {
+        console.error("Sync failed:", err);
+        if(badge) {
+            badge.innerText = "⚠️ Sync Failed - Data in Local";
+            badge.className = "sync-status-badge status-error";
+        }
+        showToast("⚠️ Cloud sync failed, but data is saved locally.", "warning");
+    });
+}
+
+// ================= DROPDOWN INITIALIZATION =================
+function initializeDropdowns() {
+    var regSel = document.getElementById('reg_class');
+    var dropdownIds = ['filter_class_reg', 'filter_class_att', 'filter_class_fee', 'filter_class_test', 'reg_sheet_class'];
+    var yearSelects = ['fee_year', 'report_year', 'reg_sheet_year'];
+
+    if (regSel) {
+        regSel.innerHTML = '';
+        classCategories.forEach(function(c) {
+            regSel.innerHTML += '<option value="' + c + '">' + c + '</option>';
+        });
+    }
+
+    dropdownIds.forEach(function(id) {
+        var element = document.getElementById(id);
+        if (element) {
+            var hasAll = element.querySelector('option[value="All"]');
+            if (hasAll) {
+                element.innerHTML = '<option value="All">All Academy Students</option>';
+            } else {
+                element.innerHTML = '';
+            }
+            classCategories.forEach(function(c) {
+                element.innerHTML += '<option value="' + c + '">' + c + '</option>';
+            });
+        }
+    });
+
+    yearSelects.forEach(function(id) {
+        var element = document.getElementById(id);
+        if (element) {
+            element.innerHTML = '';
+            for(var y = 2026; y <= 2050; y++) {
+                element.innerHTML += '<option value="' + y + '">' + y + '</option>';
+            }
+        }
+    });
+
+    var feeYear = document.getElementById('fee_year');
+    if(feeYear) feeYear.value = new Date().getFullYear();
+
+    var regSheetYear = document.getElementById('reg_sheet_year');
+    if(regSheetYear) regSheetYear.value = new Date().getFullYear();
+
+    var reportYear = document.getElementById('report_year');
+    if(reportYear) reportYear.value = new Date().getFullYear();
+
+    syncHistorySearchDropdown();
+}
+
+function syncHistorySearchDropdown() {
+    var searchDropdown = document.getElementById('history_search_roll');
+    if(!searchDropdown) return;
+    searchDropdown.innerHTML = '<option value="">-- Select Student --</option>';
+    students.forEach(function(s) {
+        searchDropdown.innerHTML += '<option value="' + s.roll + '">Roll ' + s.roll + ' - ' + s.name + ' (' + s.s_class + ')</option>';
+    });
+}
+
+// ================= TAB SWITCHING =================
+function switchTab(tabId) {
+    if (tabId === 'admin' && currentUserRole !== 'admin' && currentUserRole !== 'principal') {
+        showToast("⛔ You don't have permission to access Admin Panel!", "error");
+        return;
+    }
+
+    document.querySelectorAll('.tab-panel').forEach(function(panel) { panel.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+    document.getElementById(tabId).classList.add('active');
+    
+    var buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(function(btn) {
+        var btnText = btn.textContent.trim().toLowerCase();
+        if (btnText.includes(tabId) || 
+            (tabId === 'reports' && btnText.includes('reports')) ||
+            (tabId === 'admin' && btnText.includes('admin'))) {
+            btn.classList.add('active');
+        }
+    });
+
+    if(tabId === 'attendance') loadAttendanceTab();
+    if(tabId === 'fees') loadFeesTab();
+    if(tabId === 'tests') loadTestsTab();
+    if(tabId === 'reports') {
+        syncHistorySearchDropdown();
+        generateMonthlyRegisterSheet();
+    }
+    if(tabId === 'admin') {
+        renderUserList();
+        updateOnlineUsers();
+        updateAdminStats();
+    }
+    updateFinancialDashboard();
+}
+
+// ================= FINANCIAL DASHBOARD =================
+function updateFinancialDashboard() {
+    var month = document.getElementById('fee_month') ? document.getElementById('fee_month').value : 'June';
+    var year = document.getElementById('fee_year') ? document.getElementById('fee_year').value : new Date().getFullYear();
+    var monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
+
+    feeTransactions.forEach(function(t) {
+        var amount = parseFloat(t.amount) || 0;
+        lifetimeTotal += amount;
+        if(t.year == year) yearlyTotal += amount;
+        if(t.month === month && t.year == year) monthlyTotal += amount;
+    });
+
+    document.getElementById('dash_month').innerText = "Rs. " + monthlyTotal;
+    document.getElementById('dash_year').innerText = "Rs. " + yearlyTotal;
+    document.getElementById('dash_life').innerText = "Rs. " + lifetimeTotal;
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+// ================= STUDENT MANAGEMENT =================
+function saveStudent() {
+    var roll = document.getElementById('reg_roll').value.trim();
+    var name = document.getElementById('reg_name').value.trim();
+    var s_class = document.getElementById('reg_class').value;
+    var phone = document.getElementById('reg_phone').value.trim();
+    var fee = document.getElementById('reg_fee').value.trim() || "2500";
+    var adm_date = document.getElementById('reg_adm_date').value.trim() || todayDateStr;
+
+    if(!roll || !name || !phone) { 
+        showToast("⚠️ Please fill all fields!", "error");
+        return; 
+    }
+    
+    if(!/^[0-9]{10,15}$/.test(phone.replace(/[^0-9]/g, ''))) {
+        showToast("⚠️ Please enter a valid phone number (10-15 digits)!", "error");
+        return;
+    }
+
+    if(students.some(function(s) { return s.roll === roll; })) { 
+        showToast("⚠️ Roll Number already exists!", "error");
+        return; 
+    }
+
+    var feeAmount = parseFloat(fee);
+    if(isNaN(feeAmount) || feeAmount < 0) {
+        showToast("⚠️ Please enter a valid fee amount!", "error");
+        return;
+    }
+
+    var newStudent = { roll: roll, name: name, s_class: s_class, phone: phone, custom_fee: fee, admission_date: adm_date };
+    students.push(newStudent);
+    localStorage.setItem('bfsa_students', JSON.stringify(students));
+    
+    document.getElementById('reg_roll').value = '';
+    document.getElementById('reg_name').value = '';
+    document.getElementById('reg_phone').value = '';
+    document.getElementById('reg_adm_date').value = todayDateStr;
+
+    showToast("✅ " + name + " registered successfully! Data synced to cloud.", "success");
+    renderStudentList();
+    syncHistorySearchDropdown();
+    syncDataToGoogleSheet("ADD_STUDENT", newStudent);
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+function renderStudentList() {
+    var filter = document.getElementById('filter_class_reg').value;
+    var tbody = document.getElementById('student_list_tbody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    document.getElementById('class_count_display').innerText = "Total: " + filteredList.length;
+
+    filteredList.forEach(function(s) {
+        var actualIndex = students.findIndex(function(st) { return st.roll === s.roll; });
+        var currentCustomFee = s.custom_fee || "2500";
+        var admDate = s.admission_date || "---";
+        tbody.innerHTML += '<tr><td>' + s.roll + '</td><td>' + s.name + '</td><td><b>' + s.s_class + '</b></td><td>' + s.phone + '</td><td>Rs. ' + currentCustomFee + '</td><td>' + admDate + '</td><td><button class="action-btn btn-del" onclick="deleteStudent(' + actualIndex + ')">🗑️</button></td></tr>';
+    });
+}
+
+function deleteStudent(index) {
+    var removedStudent = students[index];
+    if(confirm("Remove " + removedStudent.name + " from academy?")) {
+        students.splice(index, 1);
+        localStorage.setItem('bfsa_students', JSON.stringify(students));
+        renderStudentList();
+        syncHistorySearchDropdown();
+        syncDataToGoogleSheet("DELETE_STUDENT", { roll: removedStudent.roll, name: removedStudent.name });
+        showToast("✅ " + removedStudent.name + " removed", "success");
+        
+        if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+            updateAdminStats();
+        }
+    }
+}
+
+function clearSystemMemory() {
+    if(confirm("⚠️ This will delete ALL data! Are you sure?")) {
+        if(confirm("⚠️ This action cannot be undone! Continue?")) {
+            localStorage.clear();
+            students = []; feeStatusMap = {}; feeTransactions = []; 
+            dailyAttendanceLog = {}; globalTestRecords = []; academyHolidays = {};
+            renderStudentList();
+            updateFinancialDashboard();
+            syncHistorySearchDropdown();
+            document.getElementById('printable_pdf_area').style.display = 'none';
+            document.getElementById('pdf_action_bar').style.display = 'none';
+            syncDataToGoogleSheet("CLEAR_ALL_DATA", { status: "empty" });
+            showToast("🎉 System Reset Successful!", "success");
+            
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
+        }
+    }
+}
+
+// ================= ATTENDANCE MANAGEMENT =================
+function toggleHolidayStatus() {
+    var dateKey = document.getElementById('att_date').value;
+    var reason = document.getElementById('holiday_reason').value.trim() || "Holiday";
+    
+    academyHolidays[dateKey] = reason;
+    localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+    showToast("✅ " + dateKey + " marked as Holiday", "success");
+    loadAttendanceTab();
+    syncDataToGoogleSheet("SET_HOLIDAY", { date: dateKey, reason: reason });
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+function removeHolidayStatus() {
+    var dateKey = document.getElementById('att_date').value;
+    if(academyHolidays[dateKey]) {
+        delete academyHolidays[dateKey];
+        localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+        document.getElementById('holiday_reason').value = '';
+        showToast("✅ Holiday removed for " + dateKey, "success");
+        loadAttendanceTab();
+        syncDataToGoogleSheet("REMOVE_HOLIDAY", { date: dateKey });
+        
+        if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+            updateAdminStats();
+        }
+    } else {
+        showToast("⚠️ No holiday found!", "error");
+    }
+}
+
+function loadAttendanceTab() {
+    var filter = document.getElementById('filter_class_att').value;
+    var tbody = document.getElementById('attendance_tbody');
+    var interactiveArea = document.getElementById('attendance_interactive_area');
+    var statusText = document.getElementById('holiday_current_status');
+    var dateKey = document.getElementById('att_date').value;
+    
+    tbody.innerHTML = '';
+
+    if(academyHolidays[dateKey]) {
+        statusText.innerText = '⚠️ HOLIDAY: "' + academyHolidays[dateKey] + '"';
+        document.getElementById('holiday_reason').value = academyHolidays[dateKey];
+        interactiveArea.style.opacity = "0.5";
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:orange; font-weight:bold;">📢 Holiday - Attendance blocked</td></tr>';
+        return;
+    } else {
+        statusText.innerText = "✅ Regular Active Day";
+        document.getElementById('holiday_reason').value = '';
+        interactiveArea.style.opacity = "1";
+    }
+    
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    if(filteredList.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; 
+        return; 
+    }
+
+    filteredList.forEach(function(s) {
+        var savedStatus = (dailyAttendanceLog[dateKey] && dailyAttendanceLog[dateKey][s.roll]) || 'P';
+        if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
+        if(!dailyAttendanceLog[dateKey][s.roll]) dailyAttendanceLog[dateKey][s.roll] = 'P';
+
+        tbody.innerHTML += '<tr><td>' + s.roll + '</td><td>' + s.name + ' <small>(' + s.s_class + ')</small></td><td><select id="att_' + s.roll + '" onchange="saveIndividualAttendanceStatus(\'' + s.roll + '\')"><option value="P" ' + (savedStatus === 'P' ? 'selected' : '') + '>✅ Present</option><option value="A" ' + (savedStatus === 'A' ? 'selected' : '') + '>❌ Absent</option></select></td><td><button class="action-btn btn-wa" onclick="sendSingleAbsentSMS(\'' + s.roll + '\')">📱 WhatsApp</button></td></tr>';
+    });
+    localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+function saveIndividualAttendanceStatus(roll) {
+    var dateKey = document.getElementById('att_date').value;
+    if(academyHolidays[dateKey]) return; 
+    var status = document.getElementById('att_' + roll).value;
+    if(!dailyAttendanceLog[dateKey]) dailyAttendanceLog[dateKey] = {};
+    dailyAttendanceLog[dateKey][roll] = status;
+    localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+
+    var s = students.find(function(st) { return st.roll === roll; }) || { name: "Unknown" };
+    syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, status: status });
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+// ================= WHATSAPP FUNCTIONS (URDU + ENGLISH) =================
+function sendWhatsApp(phone, text) {
+    var cleanPhone = phone.replace(/[^0-9]/g, '');
+    if(cleanPhone.startsWith('03')) cleanPhone = '92' + cleanPhone.substring(1);
+    if(!cleanPhone.startsWith('92')) cleanPhone = '92' + cleanPhone;
+    var url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(text);
+    window.open(url, '_blank');
+}
+
+function processNextSMSQueue() {
+    if (smsQueue.length === 0) {
+        showToast("🎉 All bulk messages processed!", "success");
+        return;
+    }
+    var item = smsQueue.shift();
+    if(confirm("Send WhatsApp to " + item.name + "?")) {
+        sendWhatsApp(item.phone, item.msg);
+        setTimeout(function() { processNextSMSQueue(); }, 3000);
+    } else {
+        showToast("⚠️ Bulk messaging stopped.", "warning");
+        smsQueue = [];
+    }
+}
+
+// ================= SINGLE ABSENT SMS (URDU + ENGLISH) =================
+function sendSingleAbsentSMS(roll) {
+    var dateKey = document.getElementById('att_date').value;
+    if(academyHolidays[dateKey]) { 
+        showToast("⚠️ Holiday - SMS not allowed!", "error");
+        return; 
+    }
+    saveIndividualAttendanceStatus(roll); 
+    var status = document.getElementById('att_' + roll).value;
+    if(status === 'P') { 
+        showToast("❌ Student is Present!", "error");
+        return; 
+    }
+    var s = students.find(function(st) { return st.roll === roll; });
+    if(!s) { showToast("⚠️ Student not found!", "error"); return; }
+    
+    var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + '، کلاس: ' + s.s_class + ') آج مورخہ *' + dateKey + '* کو اکیڈمی میں **غیر حاضر** ہیں۔\n\nبرائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nThis is to inform you that your child *' + s.name + '* (Roll No: ' + s.roll + ', Class: ' + s.s_class + ') is **ABSENT** from academy today *' + dateKey + '*.\n\nPlease inform the reason for absence.\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+    
+    sendWhatsApp(s.phone, msg);
+    showToast("✅ SMS sent to " + s.name, "success");
+}
+
+// ================= BULK ABSENT SMS (URDU + ENGLISH) =================
+function startBulkAttendanceSMS() {
+    var dateKey = document.getElementById('att_date').value;
+    if(academyHolidays[dateKey]) { 
+        showToast("⚠️ Holiday - Bulk SMS disabled!", "error");
+        return; 
+    }
+    var filter = document.getElementById('filter_class_att').value;
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    smsQueue = []; 
+
+    filteredList.forEach(function(s) {
+        saveIndividualAttendanceStatus(s.roll); 
+        var statusSelect = document.getElementById('att_' + s.roll);
+        if(statusSelect && statusSelect.value === 'A') {
+            var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + '، کلاس: ' + s.s_class + ') آج مورخہ *' + dateKey + '* کو اکیڈمی میں **غیر حاضر** ہیں۔\n\nبرائے مہربانی وجہ عدم حاضری سے آگاہ کریں۔\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nThis is to inform you that your child *' + s.name + '* (Roll No: ' + s.roll + ', Class: ' + s.s_class + ') is **ABSENT** from academy today *' + dateKey + '*.\n\nPlease inform the reason for absence.\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+            
+            smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
+        }
+    });
+
+    if(smsQueue.length === 0) { 
+        showToast("⚠️ No absent students found!", "warning");
+        return; 
+    }
+    showToast("📱 Sending " + smsQueue.length + " messages...", "info");
+    processNextSMSQueue();
+}
+
+// ================= FEES MANAGEMENT =================
+function loadFeesTab() {
+    var month = document.getElementById('fee_month').value;
+    var year = document.getElementById('fee_year').value;
+    var filter = document.getElementById('filter_class_fee').value;
+    var tbody = document.getElementById('fees_tbody');
+    tbody.innerHTML = '';
+
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    if(filteredList.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No records found.</td></tr>'; 
+        return; 
+    }
+
+    filteredList.forEach(function(s) {
+        var key = s.roll + '_' + month + '_' + year;
+        var status = feeStatusMap[key] || 'Unpaid';
+        var statusColor = status === 'Paid' ? 'green' : 'red';
+        var statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
+        var studentFeeAmt = s.custom_fee || "2500"; 
+
+        tbody.innerHTML += '<tr><td>' + s.roll + '</td><td>' + s.name + ' <small>(' + s.s_class + ')</small></td><td><b>Rs. ' + studentFeeAmt + '</b></td><td style="color:' + statusColor + '; font-weight:bold;">' + statusText + '</td><td><button class="action-btn btn-pay" onclick="markFeePaid(\'' + s.roll + '\', \'' + month + '\', \'' + year + '\')">✅ Received</button><button class="action-btn btn-warn" onclick="sendSingleFeeWarning(\'' + s.roll + '\', \'' + month + '\', \'' + year + '\')">📱 Remind</button></td></tr>';
+    });
+    updateFinancialDashboard();
+}
+
+// ================= MARK FEE PAID (URDU + ENGLISH) =================
+function markFeePaid(roll, month, year) {
+    var key = roll + '_' + month + '_' + year;
+    if(feeStatusMap[key] === 'Paid') { 
+        showToast("⚠️ Fee already paid!", "warning");
+        return; 
+    }
+    
+    var s = students.find(function(st) { return st.roll === roll; });
+    if(!s) { showToast("⚠️ Student not found!", "error"); return; }
+    
+    var studentFeeAmt = parseFloat(s.custom_fee) || 2500;
+    if(studentFeeAmt <= 0) {
+        showToast("⚠️ Invalid fee amount!", "error");
+        return;
+    }
+    
+    var liveTime = getLiveTime();
+
+    feeStatusMap[key] = 'Paid';
+    localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
+    
+    var transactionObj = { 
+        roll: roll, 
+        month: month, 
+        year: year, 
+        amount: studentFeeAmt, 
+        dateAdded: todayDateStr, 
+        timeAdded: liveTime 
+    };
+    feeTransactions.push(transactionObj);
+    localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
+
+    var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + ') کی ماہانہ فیس بابت مہینہ *' + month + '-' + year + '* کی رقم مبلغ *' + studentFeeAmt + ' روپے* موصول ہو چکی ہے۔\n\nآپ کا شکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nThis is to inform you that the monthly fee of *' + s.name + '* (Roll No: ' + s.roll + ') for the month of *' + month + '-' + year + '* amounting to *Rs. ' + studentFeeAmt + '* has been received.\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+    
+    sendWhatsApp(s.phone, msg);
+    loadFeesTab();
+    showToast("✅ Fee collected from " + s.name, "success");
+    syncDataToGoogleSheet("COLLECT_FEE", { 
+        roll: roll, 
+        name: s.name, 
+        month: month, 
+        year: year, 
+        amount: studentFeeAmt 
+    });
+    
+    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+        updateAdminStats();
+    }
+}
+
+// ================= SINGLE FEE REMINDER (URDU + ENGLISH) =================
+function sendSingleFeeWarning(roll, month, year) {
+    var key = roll + '_' + month + '_' + year;
+    if(feeStatusMap[key] === 'Paid') { 
+        showToast("⚠️ Fee already paid!", "warning");
+        return; 
+    }
+    var s = students.find(function(st) { return st.roll === roll; });
+    if(!s) { showToast("⚠️ Student not found!", "error"); return; }
+    
+    var studentFeeAmt = s.custom_fee || "2500";
+    var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + ') کی ماہانہ فیس بابت مہینہ *' + month + '-' + year + '* کی رقم مبلغ *' + studentFeeAmt + ' روپے* **واجب الادا** ہے۔\n\nبرائے مہربانی تاریخ *18-' + month + '-' + year + '* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nThis is to inform you that the monthly fee of *' + s.name + '* (Roll No: ' + s.roll + ') for the month of *' + month + '-' + year + '* amounting to *Rs. ' + studentFeeAmt + '* is **PENDING**.\n\nPlease submit the fee before *18-' + month + '-' + year + '* to avoid **late fee** charges.\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+    
+    sendWhatsApp(s.phone, msg);
+    showToast("✅ Reminder sent to " + s.name, "success");
+}
+
+// ================= BULK FEE REMINDER (URDU + ENGLISH) =================
+function startBulkFeeWarningSMS() {
+    var month = document.getElementById('fee_month').value;
+    var year = document.getElementById('fee_year').value;
+    var filter = document.getElementById('filter_class_fee').value;
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    smsQueue = [];
+
+    filteredList.forEach(function(s) {
+        var key = s.roll + '_' + month + '_' + year;
+        var status = feeStatusMap[key] || 'Unpaid';
+        var studentFeeAmt = s.custom_fee || "2500";
+        if(status === 'Unpaid') {
+            var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + ') کی ماہانہ فیس بابت مہینہ *' + month + '-' + year + '* کی رقم مبلغ *' + studentFeeAmt + ' روپے* **واجب الادا** ہے۔\n\nبرائے مہربانی تاریخ *18-' + month + '-' + year + '* سے پہلے فیس جمع کروائیں تاکہ **لیٹ فائن** سے بچا جا سکے۔\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nThis is to inform you that the monthly fee of *' + s.name + '* (Roll No: ' + s.roll + ') for the month of *' + month + '-' + year + '* amounting to *Rs. ' + studentFeeAmt + '* is **PENDING**.\n\nPlease submit the fee before *18-' + month + '-' + year + '* to avoid **late fee** charges.\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+            
+            smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
+        }
+    });
+    
+    if(smsQueue.length === 0) { 
+        showToast("⚠️ All fees are paid!", "warning");
+        return; 
+    }
+    showToast("📱 Sending " + smsQueue.length + " reminders...", "info");
+    processNextSMSQueue();
+}
+
+// ================= TEST MARKS MANAGEMENT =================
+function loadTestsTab() {
+    var filter = document.getElementById('filter_class_test').value;
+    var tbody = document.getElementById('tests_tbody');
+    tbody.innerHTML = '';
+    
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    if(filteredList.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; 
+        return; 
+    }
+
+    filteredList.forEach(function(s) {
+        tbody.innerHTML += '<tr><td>' + s.roll + '</td><td>' + s.name + ' <small>(' + s.s_class + ')</small></td><td><input type="number" id="marks_' + s.roll + '" placeholder="N/E" style="width:70px; text-align:center;" min="0"></td><td><button class="action-btn btn-wa" onclick="sendSingleTestMarkSMS(\'' + s.roll + '\')">📱 Send & Save</button></td></tr>';
+    });
+}
+
+function saveTestRecordDirectly(roll, subject, total, obt) {
+    var tDate = document.getElementById('test_date').value.trim();
+    globalTestRecords = globalTestRecords.filter(function(r) { return !(r.roll === roll && r.subject === subject && r.date === tDate); });
+    
+    var testObj = { roll: roll, date: tDate, subject: subject, total: parseInt(total), obtained: parseInt(obt) };
+    globalTestRecords.push(testObj);
+    localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+
+    var s = students.find(function(st) { return st.roll === roll; }) || { name: "Unknown" };
+    syncDataToGoogleSheet("SAVE_TEST_MARK", { date: tDate, roll: roll, name: s.name, subject: subject, total: total, obtained: obt });
+}
+
+// ================= SINGLE TEST MARK SMS (URDU + ENGLISH) =================
+function sendSingleTestMarkSMS(roll) {
+    var s = students.find(function(st) { return st.roll === roll; });
+    if(!s) { showToast("⚠️ Student not found!", "error"); return; }
+    
+    var subject = document.getElementById('test_subject').value.trim();
+    var total = document.getElementById('test_total').value.trim();
+    var marksInput = document.getElementById('marks_' + roll);
+    var obt = marksInput ? marksInput.value.trim() : "";
+
+    if(obt === "") { 
+        showToast("❌ Marks empty for " + s.name + "!", "error");
+        return; 
+    }
+
+    if(!subject || !total) { 
+        showToast("⚠️ Subject and Total marks required!", "error");
+        return; 
+    }
+    
+    saveTestRecordDirectly(roll, subject, total, obt);
+    
+    var perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
+    var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + ') کا مضمون *' + subject + '* کا ٹیسٹ رزلٹ آ گیا ہے۔\n\n📝 کل نمبر: ' + total + '\n✅ حاصل کردہ نمبر: ' + obt + '\n📊 فیصد: ' + perc + '%\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nTest result for your child *' + s.name + '* (Roll No: ' + s.roll + ') is now available.\n\n📝 Subject: ' + subject + '\n✅ Total Marks: ' + total + '\n✅ Obtained Marks: ' + obt + '\n📊 Percentage: ' + perc + '%\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+    
+    sendWhatsApp(s.phone, msg);
+    showToast("✅ Test marks sent to " + s.name, "success");
+}
+
+// ================= BULK TEST MARKS SMS (URDU + ENGLISH) =================
+function startBulkTestMarksSMS() {
+    var filter = document.getElementById('filter_class_test').value;
+    var subject = document.getElementById('test_subject').value.trim();
+    var total = document.getElementById('test_total').value.trim();
+    
+    if(!subject || !total) { 
+        showToast("⚠️ Subject and Total marks required!", "error");
+        return; 
+    }
+
+    var filteredList = filter === 'All' ? students : students.filter(function(s) { return s.s_class === filter; });
+    smsQueue = [];
+
+    filteredList.forEach(function(s) {
+        var marksInput = document.getElementById('marks_' + s.roll);
+        var obt = marksInput ? marksInput.value.trim() : "";
+        
+        if (obt !== "") {
+            saveTestRecordDirectly(s.roll, subject, total, obt);
+            
+            var perc = total > 0 ? ((obt/total)*100).toFixed(0) : 0;
+            var msg = 'السلام علیکم! محترم والدین صاحب،\n\nبرائٹ فیوچر سائنس اکیڈمی کی طرف سے مطلع کیا جاتا ہے کہ آپ کے بچے *' + s.name + '* (رول نمبر: ' + s.roll + ') کا مضمون *' + subject + '* کا ٹیسٹ رزلٹ آ گیا ہے۔\n\n📝 کل نمبر: ' + total + '\n✅ حاصل کردہ نمبر: ' + obt + '\n📊 فیصد: ' + perc + '%\n\nشکریہ!\nبرائٹ فیوچر سائنس اکیڈمی\n\n---\nDear Parent,\n\nTest result for your child *' + s.name + '* (Roll No: ' + s.roll + ') is now available.\n\n📝 Subject: ' + subject + '\n✅ Total Marks: ' + total + '\n✅ Obtained Marks: ' + obt + '\n📊 Percentage: ' + perc + '%\n\nThank you!\nBright Future Science Academy\n📞 0300-1234567';
+            
+            smsQueue.push({ phone: s.phone, msg: msg, name: s.name });
+        }
+    });
+
+    if(smsQueue.length === 0) { 
+        showToast("⚠️ No marks entered!", "warning");
+        return; 
+    }
+    showToast("📱 Sending " + smsQueue.length + " results...", "info");
+    processNextSMSQueue();
+}
+
+// ================= PDF REPORT GENERATION =================
+function printStudentReport() {
+    var pdfArea = document.getElementById('printable_pdf_area');
+    if (!pdfArea || pdfArea.style.display === 'none') {
+        showToast("⚠️ Please select a student first!", "error");
+        return;
+    }
+    
+    var printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+        showToast("⚠️ Please allow popups!", "error");
+        return;
+    }
+    
+    var content = '<!DOCTYPE html><html><head><title>Student Report Card</title><style>body { font-family: Arial, sans-serif; padding: 20px; }.pdf-report-card { max-width: 800px; margin: 0 auto; }.pdf-header { text-align: center; border-bottom: 3px double #1B365D; padding-bottom: 15px; margin-bottom: 20px; }.pdf-header h2 { color: #1B365D; margin: 0; }.pdf-student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }.pdf-info-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #ddd; }.pdf-section-title { background: #1B365D; color: white; padding: 5px 10px; margin: 15px 0 10px 0; }table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }th { background: #eef2f7; }.pdf-footer-note { text-align: center; font-size: 11px; color: #777; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }@media print { .no-print { display: none; } body { padding: 0; } }</style></head><body>' + pdfArea.innerHTML + '<div style="text-align:center; margin-top:20px;"><button onclick="window.print()" style="padding:10px 20px; background:#17a2b8; color:white; border:none; border-radius:5px; cursor:pointer;">🖨️ Print / PDF</button><button onclick="window.close()" style="padding:10px 20px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px;">Close</button></div><script>setTimeout(function() { window.print(); }, 1000);<\/script></body></html>';
+    
+    printWindow.document.write(content);
+    printWindow.document.close();
+}
+
+function generateStudentLifetimeProfile() {
+    var roll = document.getElementById('history_search_roll').value;
+    var pdfArea = document.getElementById('printable_pdf_area');
+    var actionBtn = document.getElementById('pdf_action_bar');
+    
+    if(!roll) {
+        pdfArea.style.display = 'none';
+        actionBtn.style.display = 'none';
+        return;
+    }
+
+    var s = students.find(function(st) { return st.roll === roll; });
+    if(!s) { 
+        showToast("⚠️ Student not found!", "error");
+        return; 
+    }
+
+    pdfArea.style.display = 'block';
+    actionBtn.style.display = 'block';
+
+    document.getElementById('pdf_student_name').innerText = s.name;
+    document.getElementById('pdf_roll_no').innerText = s.roll;
+    document.getElementById('pdf_class').innerText = s.s_class;
+    document.getElementById('pdf_phone').innerText = s.phone;
+    document.getElementById('pdf_admission_date').innerText = s.admission_date || "---";
+    document.getElementById('pdf_live_generation_date').innerText = todayDateStr + " " + getLiveTime();
+
+    // Attendance
+    var attTbody = document.getElementById('pdf_attendance_tbody');
+    attTbody.innerHTML = '';
+    var monthlyAttStats = {}; 
+    
+    for (var dateKey in dailyAttendanceLog) {
+        if(academyHolidays[dateKey]) continue;
+        var parts = dateKey.split('-');
+        if(parts.length === 3) {
+            var monthYear = parts[1] + "-" + parts[2]; 
+            if(dailyAttendanceLog[dateKey][roll]) {
+                var status = dailyAttendanceLog[dateKey][roll];
+                if(!monthlyAttStats[monthYear]) monthlyAttStats[monthYear] = { P: 0, A: 0 };
+                if(status === 'P') monthlyAttStats[monthYear].P++;
+                if(status === 'A') monthlyAttStats[monthYear].A++;
+            }
+        }
+    }
+
+    var attKeys = Object.keys(monthlyAttStats);
+    if(attKeys.length === 0) {
+        attTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No attendance data</td></tr>";
+    } else {
+        attKeys.forEach(function(my) {
+            var p = monthlyAttStats[my].P;
+            var a = monthlyAttStats[my].A;
+            var total = p + a;
+            var percentage = total > 0 ? ((p / total) * 100).toFixed(0) : 0;
+            attTbody.innerHTML += '<tr><td><b>' + my + '</b></td><td>' + total + '</td><td style="color:green;">' + p + '</td><td style="color:red;">' + a + '</td><td><b>' + percentage + '%</b></td></tr>';
+        });
+    }
+
+    // Fees
+    var feesTbody = document.getElementById('pdf_fees_tbody');
+    feesTbody.innerHTML = '';
+    var billingMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var feeRowsCount = 0;
+    var studentFeeAmt = s.custom_fee || "2500";
+
+    billingMonths.forEach(function(m) {
+        for(var y = 2026; y <= 2050; y++) {
+            var key = roll + '_' + m + '_' + y;
+            if(feeStatusMap[key]) {
+                feeRowsCount++;
+                var status = feeStatusMap[key];
+                var txInfo = feeTransactions.find(function(t) { return t.roll === roll && t.month === m && t.year == y; });
+                var timestampStr = txInfo ? txInfo.dateAdded + ' (' + (txInfo.timeAdded || '') + ')' : '---';
+                var statusText = status === 'Paid' ? '✅ Paid' : '❌ Pending';
+                feesTbody.innerHTML += '<tr><td>' + m + ' ' + y + '</td><td>Rs. ' + studentFeeAmt + '</td><td style="color:' + (status === 'Paid' ? 'green' : 'red') + '; font-weight:bold;">' + statusText + '</td><td>' + timestampStr + '</td></tr>';
+            }
+        }
+    });
+
+    if(feeRowsCount === 0) { 
+        feesTbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color:gray;'>No fee records</td></tr>"; 
+    }
+
+    // Tests
+    var testTbody = document.getElementById('pdf_tests_tbody');
+    testTbody.innerHTML = '';
+    var sTests = globalTestRecords.filter(function(t) { return t.roll === roll; });
+    
+    if(sTests.length === 0) {
+        testTbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:gray;'>No test records</td></tr>";
+    } else {
+        sTests.sort(function(a,b) { return b.date.localeCompare(a.date); });
+        sTests.forEach(function(t) {
+            var perc = t.total > 0 ? ((t.obtained / t.total) * 100).toFixed(0) : 0;
+            testTbody.innerHTML += '<tr><td>' + t.date + '</td><td><b>' + t.subject + '</b></td><td>' + t.total + '</td><td><b>' + t.obtained + '</b></td><td style="font-weight:bold; color:' + (perc >= 40 ? 'green' : 'red') + ';">' + perc + '%</td></tr>';
+        });
+    }
+}
+
+// ================= MONTHLY REGISTER SHEET =================
+function generateMonthlyRegisterSheet() {
+    var selectedClass = document.getElementById('reg_sheet_class').value;
+    var month = document.getElementById('reg_sheet_month').value; 
+    var year = document.getElementById('reg_sheet_year').value; 
+    var table = document.getElementById('register_sheet_table');
+    
+    if(!table) return;
+    table.innerHTML = '';
+
+    var filteredStudents = selectedClass === 'All' ? students : students.filter(function(s) { return s.s_class === selectedClass; });
+    if(filteredStudents.length === 0) {
+        table.innerHTML = "<tr><td style='color:red; padding:10px;'>No students in this class.</td></tr>";
+        return;
+    }
+
+    var daysInMonth = new Date(year, parseInt(month), 0).getDate();
+
+    var headerHtml = '<tr><th>Roll</th><th>Student Name</th><th>Class</th>';
+    for(var d = 1; d <= daysInMonth; d++) {
+        headerHtml += '<th>' + d + '</th>';
+    }
+    headerHtml += '</tr>';
+    table.innerHTML += headerHtml;
+
+    filteredStudents.forEach(function(s) {
+        var rowHtml = '<tr><td><b>' + s.roll + '</b></td><td><b>' + s.name + '</b></td><td><small>' + s.s_class + '</small></td>';
+        
+        for(var d = 1; d <= daysInMonth; d++) {
+            var dayStr = d < 10 ? '0' + d : d;
+            var checkDateKey = dayStr + '-' + month + '-' + year;
+            
+            if(academyHolidays[checkDateKey]) {
+                var reasonText = academyHolidays[checkDateKey];
+                rowHtml += '<td class="h-cell" title="' + reasonText + '">' + reasonText + '</td>';
+            } else {
+                var dayStatus = 'empty';
+                if(dailyAttendanceLog[checkDateKey] && dailyAttendanceLog[checkDateKey][s.roll]) {
+                    dayStatus = dailyAttendanceLog[checkDateKey][s.roll];
+                }
+
+                if(dayStatus === 'P') {
+                    rowHtml += '<td class="p-cell">P</td>';
+                } else if(dayStatus === 'A') {
+                    rowHtml += '<td class="a-cell">A</td>';
+                } else {
+                    rowHtml += '<td class="empty-cell">-</td>';
+                }
+            }
+        }
+        rowHtml += '</tr>';
+        table.innerHTML += rowHtml;
+    });
+}
+
+// ================= BACKUP SYSTEM =================
+function exportAcademyBackupFile() {
+    if(students.length === 0 && feeTransactions.length === 0) {
+        showToast("❌ No data to backup!", "error");
+        return;
+    }
+    
+    var backupMasterObject = {
+        version: "2.0",
+        students: students,
+        fees: feeStatusMap,
+        transactions: feeTransactions,
+        attendance: dailyAttendanceLog,
+        tests: globalTestRecords,
+        holidays: academyHolidays,
+        users: systemUsers,
+        backupDate: todayDateStr,
+        backupTime: getLiveTime(),
+        totalStudents: students.length,
+        totalTransactions: feeTransactions.length
+    };
+
+    var jsonString = JSON.stringify(backupMasterObject, null, 2);
+    var blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+    var downloadLink = document.createElement("a");
+    
+    var formattedFileDate = todayDateStr.replace(/-/g, '_');
+    downloadLink.download = 'bfsa_full_backup_' + formattedFileDate + '.json';
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    showToast("📥 Backup downloaded! (" + students.length + " students)", "success");
+    syncDataToGoogleSheet("EXPORT_BACKUP", { totalStudents: students.length });
+}
+
+function importAcademyBackupFile(inputElement) {
+    var file = inputElement.files[0];
+    if (!file) {
+        showToast("⚠️ Please select a backup file!", "error");
+        return;
+    }
+
+    if (!confirm("⚠️ Importing '" + file.name + "' will REPLACE all current data! Continue?")) {
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var parsedData = JSON.parse(e.target.result);
+            
+            if (parsedData.students !== undefined) {
+                students = parsedData.students || [];
+                feeStatusMap = parsedData.fees || {};
+                feeTransactions = parsedData.transactions || [];
+                dailyAttendanceLog = parsedData.attendance || {};
+                globalTestRecords = parsedData.tests || [];
+                academyHolidays = parsedData.holidays || {};
+                if (parsedData.users) systemUsers = parsedData.users;
+
+                localStorage.setItem('bfsa_students', JSON.stringify(students));
+                localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
+                localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
+                localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+                localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+                localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+                localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
+
+                showToast("📤 Data Restored! " + students.length + " students loaded.", "success");
+                
+                renderStudentList();
+                updateFinancialDashboard();
+                syncHistorySearchDropdown();
+                loadAttendanceTab();
+                generateMonthlyRegisterSheet();
+                renderUserList();
+                updateOnlineUsers();
+
+                if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                    updateAdminStats();
+                }
+
+                syncDataToGoogleSheet("RESTORE_BACKUP", { 
+                    totalStudents: students.length,
+                    backupDate: parsedData.backupDate || "unknown"
+                });
+            } else {
+                showToast("❌ Invalid backup file format!", "error");
+            }
+        } catch (err) {
+            showToast("❌ Error reading file. Invalid JSON.", "error");
+            console.error("Import error:", err);
+        }
+    };
+    reader.readAsText(file);
+    inputElement.value = '';
+}
+
+// ================= INITIALIZATION =================
+document.addEventListener('DOMContentLoaded', function() {
+    var dateFields = ['att_date', 'report_daily_date', 'test_date', 'reg_adm_date'];
+    dateFields.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.value = todayDateStr;
+    });
+
+    var schoolName = document.getElementById('school_name_setting');
+    if (schoolName) {
+        var savedName = localStorage.getItem('bfsa_school_name');
+        if (savedName) schoolName.value = savedName;
+    }
+
+    var sheetUrl = document.getElementById('google_sheet_url_setting');
+    if (sheetUrl) {
+        var savedUrl = localStorage.getItem('bfsa_google_sheet_url');
+        if (savedUrl) sheetUrl.value = savedUrl;
+    }
+
+    if (window.location.search.includes('autologin')) {
+        setTimeout(function() { executeSecurePortalLogin(); }, 500);
+    }
+
+    console.log("✅ Bright Future Science Academy v2.0 - Google Sheets Connected!");
+    console.log("📊 Students: " + students.length + ", Teachers: " + Object.keys(systemUsers).length);
+    console.log("☁️ Google Sheets URL: " + GOOGLE_SHEET_WEB_APP_URL);
+});
+</script>
 </body>
 </html>
