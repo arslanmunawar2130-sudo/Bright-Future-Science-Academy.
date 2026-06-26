@@ -133,7 +133,37 @@
 
         .container { padding: 15px; max-width: 1100px; margin: auto; }
 
-        /* Dashboard */
+        /* Dashboard - Only for Admin */
+        .admin-stats {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+        .admin-stats.show { display: block; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .stat-card h4 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
+        .stat-card p { margin: 5px 0 0 0; font-size: 18px; font-weight: bold; color: var(--primary-color); }
+        .stat-card.green p { color: var(--success-color); }
+        .stat-card.red p { color: var(--danger-color); }
+        .stat-card.purple p { color: var(--purple-color); }
+
+        /* Dashboard Cards */
         .dashboard {
             display: flex;
             justify-content: space-between;
@@ -154,9 +184,6 @@
         .dash-card.monthly { border-top-color: var(--success-color); }
         .dash-card.yearly { border-top-color: var(--warning-color); }
         .dash-card.lifetime { border-top-color: #17a2b8; }
-        .dash-card.presents { border-top-color: var(--success-color); background: #f0fdf4; }
-        .dash-card.absents { border-top-color: var(--danger-color); background: #fef2f2; }
-        .dash-card.collections { border-top-color: var(--purple-color); background: #faf5ff; }
         .dash-card h4 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
         .dash-card p { margin: 5px 0 0 0; font-size: 16px; font-weight: bold; color: #222; }
 
@@ -190,6 +217,7 @@
             border-bottom-color: var(--primary-color);
             background-color: #f0f4f8;
         }
+        .tab-btn.hidden-tab { display: none; }
 
         .tab-panel {
             display: none;
@@ -582,6 +610,7 @@
             .header { font-size: 16px; padding: 10px; }
             #logged_teacher_badge { position: static; display: block; margin-top: 5px; }
             .login-card { padding: 25px 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -630,6 +659,41 @@
                 </div>
             </div>
 
+            <!-- ADMIN STATS - Only visible to Admin -->
+            <div id="admin_stats_section" class="admin-stats">
+                <h4 style="margin:0 0 10px 0; color:var(--primary-color);">📊 Academy Statistics</h4>
+                <div class="stats-grid">
+                    <div class="stat-card purple">
+                        <h4>Total Students</h4>
+                        <p id="admin_total_students">0</p>
+                    </div>
+                    <div class="stat-card green">
+                        <h4>Present Today</h4>
+                        <p id="admin_present_today">0</p>
+                    </div>
+                    <div class="stat-card red">
+                        <h4>Absent Today</h4>
+                        <p id="admin_absent_today">0</p>
+                    </div>
+                </div>
+                
+                <h4 style="margin:15px 0 10px 0; color:var(--primary-color);">💰 Fees Summary Report</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Monthly Fees</h4>
+                        <p id="admin_monthly_fees">Rs. 0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Yearly Fees</h4>
+                        <p id="admin_yearly_fees">Rs. 0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Lifetime Fees</h4>
+                        <p id="admin_lifetime_fees">Rs. 0</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- BACKUP VAULT -->
             <div class="backup-vault-box">
                 <h4 style="margin:0; color:#1b365d; font-size:14px;">🛡️ Data Security Vault (Auto-Save + Backup)</h4>
@@ -645,8 +709,8 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD -->
-            <div class="dashboard">
+            <!-- DASHBOARD - Teachers can see only their dashboard -->
+            <div class="dashboard" id="teacher_dashboard">
                 <div class="dash-card monthly"><h4>Monthly Fees</h4><p id="dash_month">Rs. 0</p></div>
                 <div class="dash-card yearly"><h4>Yearly Fees</h4><p id="dash_year">Rs. 0</p></div>
                 <div class="dash-card lifetime"><h4>Lifetime Fees</h4><p id="dash_life">Rs. 0</p></div>
@@ -659,7 +723,7 @@
                 <button class="tab-btn" onclick="switchTab('fees')">3. Fees</button>
                 <button class="tab-btn" onclick="switchTab('tests')">4. Tests</button>
                 <button class="tab-btn" onclick="switchTab('reports')">📊 Reports</button>
-                <button class="tab-btn" onclick="switchTab('admin')">⚙️ Admin</button>
+                <button class="tab-btn hidden-tab" id="admin_tab_btn" onclick="switchTab('admin')">⚙️ Admin</button>
             </div>
 
             <!-- REGISTRATION TAB -->
@@ -856,10 +920,48 @@
                 </div>
             </div>
 
-            <!-- ADMIN TAB -->
+            <!-- ADMIN TAB (Only visible to Admin) -->
             <div id="admin" class="tab-panel">
                 <h3>⚙️ Admin Control Panel</h3>
                 
+                <!-- Academy Statistics -->
+                <div class="admin-panel" style="background:#e8f5e9; border-color: var(--success-color);">
+                    <h4>📊 Academy Statistics (Only Admin)</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Total Students</div>
+                            <div style="font-size:22px; font-weight:bold; color:var(--purple-color);" id="admin_total_students2">0</div>
+                        </div>
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Present Today</div>
+                            <div style="font-size:22px; font-weight:bold; color:var(--success-color);" id="admin_present_today2">0</div>
+                        </div>
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Absent Today</div>
+                            <div style="font-size:22px; font-weight:bold; color:var(--danger-color);" id="admin_absent_today2">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fees Summary -->
+                <div class="admin-panel" style="background:#f0f4ff; border-color: var(--purple-color);">
+                    <h4>💰 Fees Summary Report (Only Admin)</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Monthly Fees</div>
+                            <div style="font-size:20px; font-weight:bold; color:var(--success-color);" id="admin_monthly_fees2">Rs. 0</div>
+                        </div>
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Yearly Fees</div>
+                            <div style="font-size:20px; font-weight:bold; color:var(--warning-color);" id="admin_yearly_fees2">Rs. 0</div>
+                        </div>
+                        <div style="background:white; padding:12px; border-radius:6px; text-align:center; border:1px solid #ddd;">
+                            <div style="font-size:11px; color:#666;">Lifetime Fees</div>
+                            <div style="font-size:20px; font-weight:bold; color:#17a2b8;" id="admin_lifetime_fees2">Rs. 0</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- User Management -->
                 <div class="admin-panel">
                     <h4>👥 Manage Teachers & Users</h4>
@@ -925,6 +1027,7 @@
             "https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec";
 
         let currentActiveTeacher = "Admin";
+        let currentUserRole = "admin";
         let smsQueue = [];
         let isOfflineMode = false;
 
@@ -989,7 +1092,7 @@
 
         // ================= SECURE LOGIN =================
         function executeSecurePortalLogin() {
-            const userIn = document.getElementById("login_username").value.trim();
+            const userIn = document.getElementById("login_username").value.trim().toLowerCase();
             const passIn = document.getElementById("login_password").value.trim();
             const submitBtn = document.getElementById("login_submit_btn");
 
@@ -1002,9 +1105,11 @@
             submitBtn.disabled = true;
             submitBtn.textContent = "⏳ Please wait...";
 
+            // Check if user exists and is not removed
             if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
                 currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
+                currentUserRole = systemUsers[userIn].role;
+                document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
                 setLoginMessage("✅ Login Successful!", "success");
                 showToast("✅ Welcome " + currentActiveTeacher, "success");
                 tryCloudSync();
@@ -1012,6 +1117,7 @@
                 return;
             }
 
+            // Check cloud
             fetch(GOOGLE_SHEET_WEB_APP_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1025,14 +1131,16 @@
             .then(response => {
                 if(response.result === "success" && response.login === true) {
                     currentActiveTeacher = response.teacher || userIn;
-                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
+                    currentUserRole = response.role || "teacher";
+                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
                     setLoginMessage("✅ Cloud Login Successful!", "success");
                     showToast("✅ Welcome " + currentActiveTeacher, "success");
                     unlockWebsiteMainDashboard();
                 } else {
                     if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
                         currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                        document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
+                        currentUserRole = systemUsers[userIn].role;
+                        document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
                         setLoginMessage("✅ Offline Login Successful!", "success");
                         showToast("✅ Welcome " + currentActiveTeacher + " (Offline)", "success");
                         isOfflineMode = true;
@@ -1048,7 +1156,8 @@
             .catch(err => {
                 if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
                     currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
-                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher;
+                    currentUserRole = systemUsers[userIn].role;
+                    document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
                     setLoginMessage("✅ Offline Login Successful!", "success");
                     showToast("✅ Welcome " + currentActiveTeacher + " (Offline)", "success");
                     isOfflineMode = true;
@@ -1091,6 +1200,16 @@
             submitBtn.disabled = false;
             submitBtn.textContent = "🔓 Unlock Portal & Sync";
             
+            // Show/Hide Admin features based on role
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                document.getElementById('admin_tab_btn').classList.remove('hidden-tab');
+                document.getElementById('admin_stats_section').classList.add('show');
+                updateAdminStats();
+            } else {
+                document.getElementById('admin_tab_btn').classList.add('hidden-tab');
+                document.getElementById('admin_stats_section').classList.remove('show');
+            }
+            
             initializeDropdowns();
             renderStudentList();
             updateFinancialDashboard();
@@ -1105,6 +1224,51 @@
             updateOnlineUsers();
             
             showToast("🎉 Academy Portal Unlocked!", "success");
+        }
+
+        // ================= ADMIN STATS =================
+        function updateAdminStats() {
+            // Total Students
+            const totalStudents = students.length;
+            document.getElementById('admin_total_students').textContent = totalStudents;
+            document.getElementById('admin_total_students2').textContent = totalStudents;
+
+            // Today's Attendance
+            const today = document.getElementById('att_date').value || todayDateStr;
+            let present = 0, absent = 0;
+            if (dailyAttendanceLog[today]) {
+                students.forEach(s => {
+                    const status = dailyAttendanceLog[today][s.roll] || 'P';
+                    if (status === 'P') present++;
+                    else if (status === 'A') absent++;
+                });
+            } else {
+                // If no attendance taken yet, all are present by default
+                present = students.length;
+            }
+            document.getElementById('admin_present_today').textContent = present;
+            document.getElementById('admin_present_today2').textContent = present;
+            document.getElementById('admin_absent_today').textContent = absent;
+            document.getElementById('admin_absent_today2').textContent = absent;
+
+            // Fees Summary
+            const month = document.getElementById('fee_month')?.value || 'June';
+            const year = document.getElementById('fee_year')?.value || new Date().getFullYear();
+            let monthlyTotal = 0, yearlyTotal = 0, lifetimeTotal = 0;
+
+            feeTransactions.forEach(t => {
+                const amount = parseFloat(t.amount) || 0;
+                lifetimeTotal += amount;
+                if(t.year == year) yearlyTotal += amount;
+                if(t.month === month && t.year == year) monthlyTotal += amount;
+            });
+
+            document.getElementById('admin_monthly_fees').textContent = "Rs. " + monthlyTotal;
+            document.getElementById('admin_monthly_fees2').textContent = "Rs. " + monthlyTotal;
+            document.getElementById('admin_yearly_fees').textContent = "Rs. " + yearlyTotal;
+            document.getElementById('admin_yearly_fees2').textContent = "Rs. " + yearlyTotal;
+            document.getElementById('admin_lifetime_fees').textContent = "Rs. " + lifetimeTotal;
+            document.getElementById('admin_lifetime_fees2').textContent = "Rs. " + lifetimeTotal;
         }
 
         // ================= USER MANAGEMENT FUNCTIONS =================
@@ -1134,7 +1298,7 @@
         }
 
         function addNewUser() {
-            const username = document.getElementById('new_username').value.trim();
+            const username = document.getElementById('new_username').value.trim().toLowerCase();
             const password = document.getElementById('new_password').value.trim();
             const role = document.getElementById('new_user_role').value;
 
@@ -1176,11 +1340,12 @@
                 showToast("⚠️ Cannot delete admin user!", "error");
                 return;
             }
-            if (confirm(`Remove user "${username}"?`)) {
+            if (confirm(`Remove user "${username}"? They will not be able to login again.`)) {
                 delete systemUsers[username];
                 localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
                 renderUserList();
-                showToast(`✅ User "${username}" removed`, "success");
+                updateOnlineUsers();
+                showToast(`✅ User "${username}" removed successfully!`, "success");
                 syncDataToGoogleSheet("DELETE_USER", { username });
             }
         }
@@ -1337,6 +1502,12 @@
 
         // ================= TAB SWITCHING =================
         function switchTab(tabId) {
+            // Check if trying to access admin tab without permission
+            if (tabId === 'admin' && currentUserRole !== 'admin' && currentUserRole !== 'principal') {
+                showToast("⛔ You don't have permission to access Admin Panel!", "error");
+                return;
+            }
+
             document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -1361,6 +1532,7 @@
             if(tabId === 'admin') {
                 renderUserList();
                 updateOnlineUsers();
+                updateAdminStats();
             }
             updateFinancialDashboard();
         }
@@ -1381,6 +1553,11 @@
             document.getElementById('dash_month').innerText = "Rs. " + monthlyTotal;
             document.getElementById('dash_year').innerText = "Rs. " + yearlyTotal;
             document.getElementById('dash_life').innerText = "Rs. " + lifetimeTotal;
+            
+            // Update admin stats if visible
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         // ================= STUDENT MANAGEMENT =================
@@ -1426,6 +1603,11 @@
             renderStudentList();
             syncHistorySearchDropdown();
             syncDataToGoogleSheet("ADD_STUDENT", newStudent);
+            
+            // Update admin stats
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         function renderStudentList() {
@@ -1454,6 +1636,10 @@
                 syncHistorySearchDropdown();
                 syncDataToGoogleSheet("DELETE_STUDENT", { roll: removedStudent.roll, name: removedStudent.name });
                 showToast(`✅ ${removedStudent.name} removed`, "success");
+                
+                if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                    updateAdminStats();
+                }
             }
         }
 
@@ -1470,6 +1656,10 @@
                     document.getElementById('pdf_action_bar').style.display = 'none';
                     syncDataToGoogleSheet("CLEAR_ALL_DATA", { status: "empty" });
                     showToast("🎉 System Reset Successful!", "success");
+                    
+                    if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                        updateAdminStats();
+                    }
                 }
             }
         }
@@ -1484,6 +1674,10 @@
             showToast(`✅ ${dateKey} marked as Holiday`, "success");
             loadAttendanceTab();
             syncDataToGoogleSheet("SET_HOLIDAY", { date: dateKey, reason: reason });
+            
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         function removeHolidayStatus() {
@@ -1495,6 +1689,10 @@
                 showToast(`✅ Holiday removed for ${dateKey}`, "success");
                 loadAttendanceTab();
                 syncDataToGoogleSheet("REMOVE_HOLIDAY", { date: dateKey });
+                
+                if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                    updateAdminStats();
+                }
             } else {
                 showToast("⚠️ No holiday found!", "error");
             }
@@ -1546,6 +1744,10 @@
                     </tr>`;
             });
             localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+            
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         function saveIndividualAttendanceStatus(roll) {
@@ -1558,6 +1760,10 @@
 
             let s = students.find(st => st.roll === roll) || { name: "Unknown" };
             syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, status: status });
+            
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         // ================= WHATSAPP FUNCTIONS (URDU + ENGLISH) =================
@@ -1766,6 +1972,10 @@ Bright Future Science Academy
                 year, 
                 amount: studentFeeAmt 
             });
+            
+            if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                updateAdminStats();
+            }
         }
 
         // ================= SINGLE FEE REMINDER (URDU + ENGLISH) =================
@@ -2298,6 +2508,10 @@ Bright Future Science Academy
                         generateMonthlyRegisterSheet();
                         renderUserList();
                         updateOnlineUsers();
+
+                        if (currentUserRole === 'admin' || currentUserRole === 'principal') {
+                            updateAdminStats();
+                        }
 
                         syncDataToGoogleSheet("RESTORE_BACKUP", { 
                             totalStudents: students.length,
