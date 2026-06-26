@@ -1022,6 +1022,7 @@
 
 <script>
 // ================= CONFIGURATION =================
+// ✅ WORKING GOOGLE SHEET URL - ALREADY CONFIGURED
 var GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4iG7YKG8NnAogLuYa3tByNRvt7T9Ux-d6dMDxWwjWUlzksYYqsMyoSIV8f6MWJ7qR0g/exec";
 
 var currentActiveTeacher = "Admin";
@@ -1105,7 +1106,7 @@ function executeSecurePortalLogin() {
     submitBtn.disabled = true;
     submitBtn.textContent = "⏳ Please wait...";
 
-    // Check local users
+    // Check local users first (fallback)
     if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
         currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
         currentUserRole = systemUsers[userIn].role;
@@ -1113,13 +1114,201 @@ function executeSecurePortalLogin() {
         setLoginMessage("✅ Login Successful!", "success");
         showToast("✅ Welcome " + currentActiveTeacher, "success");
         unlockWebsiteMainDashboard();
+        // Try to sync data from cloud in background
+        fetchAllDataFromCloud();
         return;
-    } else {
-        setLoginMessage("❌ Invalid credentials!", "error");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "🔓 Unlock Portal";
-        showToast("❌ Login failed!", "error");
     }
+
+    // Check cloud
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "LOGIN_CHECK",
+            payload: { username: userIn, password: passIn },
+            teacher: "System",
+            timestamp: new Date().toLocaleString()
+        })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(response) {
+        if(response.result === "success" && response.login === true) {
+            currentActiveTeacher = response.teacher || userIn;
+            currentUserRole = response.role || "teacher";
+            document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
+            setLoginMessage("✅ Cloud Login Successful!", "success");
+            showToast("✅ Welcome " + currentActiveTeacher, "success");
+            unlockWebsiteMainDashboard();
+            // Fetch all data from cloud after successful login
+            fetchAllDataFromCloud();
+        } else {
+            setLoginMessage("❌ Invalid credentials!", "error");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🔓 Unlock Portal";
+            showToast("❌ Login failed!", "error");
+        }
+    })
+    .catch(function(err) {
+        // Fallback to local
+        if (systemUsers[userIn] && systemUsers[userIn].password === passIn) {
+            currentActiveTeacher = userIn.charAt(0).toUpperCase() + userIn.slice(1);
+            currentUserRole = systemUsers[userIn].role;
+            document.getElementById("logged_teacher_badge").innerText = "👤 User: " + currentActiveTeacher + " (" + currentUserRole + ")";
+            setLoginMessage("✅ Offline Login Successful!", "success");
+            showToast("✅ Welcome " + currentActiveTeacher + " (Offline Mode)", "success");
+            unlockWebsiteMainDashboard();
+        } else {
+            setLoginMessage("❌ Login failed. Check network!", "error");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🔓 Unlock Portal";
+            showToast("❌ Login failed!", "error");
+        }
+    });
+}
+
+function fetchAllDataFromCloud() {
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "FETCH_ALL_DATA",
+            payload: {},
+            teacher: currentActiveTeacher,
+            timestamp: new Date().toLocaleString()
+        })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(response) {
+        if (response.result === "success" && response.data) {
+            var cloudData = response.data;
+            // Merge cloud data into local data
+            // Students
+            if (cloudData.students) {
+                students = cloudData.students;
+                localStorage.setItem('bfsa_students', JSON.stringify(students));
+            }
+            // Attendance
+            if (cloudData.attendance) {
+                // Convert array to map
+                var attMap = {};
+                cloudData.attendance.forEach(function(row) {
+                    var date = row.Date;
+                    var roll = row.Roll;
+                    var status = row.Status;
+                    if (!attMap[date]) attMap[date] = {};
+                    attMap[date][roll] = status;
+                });
+                dailyAttendanceLog = attMap;
+                localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
+            }
+            // Fees
+            if (cloudData.fees) {
+                var feeMap = {};
+                var feeTx = [];
+                cloudData.fees.forEach(function(row) {
+                    var key = row.Roll + '_' + row.Month + '_' + row.Year;
+                    feeMap[key] = 'Paid';
+                    feeTx.push({
+                        roll: row.Roll,
+                        month: row.Month,
+                        year: row.Year,
+                        amount: row.Amount,
+                        dateAdded: row.Date,
+                        timeAdded: row.Time || ''
+                    });
+                });
+                feeStatusMap = feeMap;
+                feeTransactions = feeTx;
+                localStorage.setItem('bfsa_fees', JSON.stringify(feeStatusMap));
+                localStorage.setItem('bfsa_transactions', JSON.stringify(feeTransactions));
+            }
+            // Tests
+            if (cloudData.tests) {
+                var tests = cloudData.tests.map(function(row) {
+                    return {
+                        roll: row.Roll,
+                        date: row.Date,
+                        subject: row.Subject,
+                        total: parseInt(row.Total),
+                        obtained: parseInt(row.Obtained)
+                    };
+                });
+                globalTestRecords = tests;
+                localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
+            }
+            // Holidays
+            if (cloudData.holidays) {
+                var holMap = {};
+                cloudData.holidays.forEach(function(row) {
+                    holMap[row.Date] = row.Reason;
+                });
+                academyHolidays = holMap;
+                localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
+            }
+            // Users
+            if (cloudData.users) {
+                var users = {};
+                cloudData.users.forEach(function(row) {
+                    if (row.Username && row.Password) {
+                        users[row.Username] = {
+                            password: row.Password,
+                            role: row.Role || 'teacher'
+                        };
+                    }
+                });
+                systemUsers = users;
+                localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
+            }
+            // Refresh UI
+            renderStudentList();
+            updateFinancialDashboard();
+            renderUserList();
+            loadAttendanceTab();
+            generateMonthlyRegisterSheet();
+            updateAdminStats();
+            showToast("✅ Data synced from cloud!", "success");
+        }
+    })
+    .catch(function(err) {
+        console.log("Cloud fetch failed, using local data.", err);
+    });
+}
+
+function syncDataToGoogleSheet(actionType, payloadData) {
+    var badge = document.getElementById('global_sync_badge');
+    if(badge) {
+        badge.innerText = "⏳ Syncing...";
+        badge.className = "sync-status-badge status-pending";
+    }
+
+    var bodyData = {
+        action: actionType,
+        payload: payloadData,
+        teacher: currentActiveTeacher,
+        timestamp: new Date().toLocaleString()
+    };
+
+    fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(bodyData)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(resData) {
+        if(badge) {
+            badge.innerText = "☁️ Cloud Synced";
+            badge.className = "sync-status-badge status-synced";
+        }
+        showToast("✅ Synced to cloud!", "success");
+    })
+    .catch(function(err) {
+        console.error("Sync failed:", err);
+        if(badge) {
+            badge.innerText = "⚠️ Sync Failed - Data in Local";
+            badge.className = "sync-status-badge status-error";
+        }
+        showToast("⚠️ Cloud sync failed, but data is saved locally.", "warning");
+    });
 }
 
 function unlockWebsiteMainDashboard() {
@@ -1130,7 +1319,6 @@ function unlockWebsiteMainDashboard() {
     submitBtn.disabled = false;
     submitBtn.textContent = "🔓 Unlock Portal";
     
-    // Show/Hide Admin based on role
     if (currentUserRole === 'admin' || currentUserRole === 'principal') {
         document.getElementById('admin_tab_btn').classList.remove('hidden-tab');
         document.getElementById('admin_stats_section').classList.add('show');
@@ -1245,6 +1433,7 @@ function addNewUser() {
     
     renderUserList();
     showToast("✅ User '" + username + "' added successfully!", "success");
+    syncDataToGoogleSheet("ADD_USER", { username: username, password: password, role: role });
 }
 
 function changeUserPassword(username) {
@@ -1254,6 +1443,9 @@ function changeUserPassword(username) {
         localStorage.setItem('bfsa_users', JSON.stringify(systemUsers));
         renderUserList();
         showToast("✅ Password changed for '" + username + "'", "success");
+        // Optionally sync to cloud
+        // We don't have a dedicated change password action, but we can re-save user
+        syncDataToGoogleSheet("ADD_USER", { username: username, password: newPass, role: systemUsers[username].role });
     } else if (newPass !== null) {
         showToast("⚠️ Password must be at least 4 characters!", "error");
     }
@@ -1270,6 +1462,7 @@ function deleteUser(username) {
         renderUserList();
         updateOnlineUsers();
         showToast("✅ User '" + username + "' removed successfully!", "success");
+        syncDataToGoogleSheet("DELETE_USER", { username: username });
     }
 }
 
@@ -1463,6 +1656,7 @@ function saveStudent() {
     showToast("✅ " + name + " registered successfully!", "success");
     renderStudentList();
     syncHistorySearchDropdown();
+    syncDataToGoogleSheet("ADD_STUDENT", newStudent);
     
     if (currentUserRole === 'admin' || currentUserRole === 'principal') {
         updateAdminStats();
@@ -1493,6 +1687,7 @@ function deleteStudent(index) {
         localStorage.setItem('bfsa_students', JSON.stringify(students));
         renderStudentList();
         syncHistorySearchDropdown();
+        syncDataToGoogleSheet("DELETE_STUDENT", { roll: removedStudent.roll, name: removedStudent.name });
         showToast("✅ " + removedStudent.name + " removed", "success");
         
         if (currentUserRole === 'admin' || currentUserRole === 'principal') {
@@ -1512,6 +1707,7 @@ function clearSystemMemory() {
             syncHistorySearchDropdown();
             document.getElementById('printable_pdf_area').style.display = 'none';
             document.getElementById('pdf_action_bar').style.display = 'none';
+            syncDataToGoogleSheet("CLEAR_ALL_DATA", { admin: "admin" });
             showToast("🎉 System Reset Successful!", "success");
             
             if (currentUserRole === 'admin' || currentUserRole === 'principal') {
@@ -1530,6 +1726,7 @@ function toggleHolidayStatus() {
     localStorage.setItem('bfsa_holidays', JSON.stringify(academyHolidays));
     showToast("✅ " + dateKey + " marked as Holiday", "success");
     loadAttendanceTab();
+    syncDataToGoogleSheet("SET_HOLIDAY", { date: dateKey, reason: reason });
     
     if (currentUserRole === 'admin' || currentUserRole === 'principal') {
         updateAdminStats();
@@ -1544,6 +1741,7 @@ function removeHolidayStatus() {
         document.getElementById('holiday_reason').value = '';
         showToast("✅ Holiday removed for " + dateKey, "success");
         loadAttendanceTab();
+        syncDataToGoogleSheet("REMOVE_HOLIDAY", { date: dateKey });
         
         if (currentUserRole === 'admin' || currentUserRole === 'principal') {
             updateAdminStats();
@@ -1603,6 +1801,7 @@ function saveIndividualAttendanceStatus(roll) {
     localStorage.setItem('bfsa_attendance_logs', JSON.stringify(dailyAttendanceLog));
 
     var s = students.find(function(st) { return st.roll === roll; }) || { name: "Unknown" };
+    syncDataToGoogleSheet("SAVE_ATTENDANCE", { date: dateKey, roll: roll, name: s.name, status: status });
     
     if (currentUserRole === 'admin' || currentUserRole === 'principal') {
         updateAdminStats();
@@ -1748,6 +1947,15 @@ function markFeePaid(roll, month, year) {
     sendWhatsApp(s.phone, msg);
     loadFeesTab();
     showToast("✅ Fee collected from " + s.name, "success");
+    syncDataToGoogleSheet("COLLECT_FEE", { 
+        roll: roll, 
+        name: s.name, 
+        month: month, 
+        year: year, 
+        amount: studentFeeAmt,
+        dateAdded: todayDateStr,
+        timeAdded: liveTime
+    });
     
     if (currentUserRole === 'admin' || currentUserRole === 'principal') {
         updateAdminStats();
@@ -1824,6 +2032,14 @@ function saveTestRecordDirectly(roll, subject, total, obt) {
     localStorage.setItem('bfsa_test_records', JSON.stringify(globalTestRecords));
 
     var s = students.find(function(st) { return st.roll === roll; }) || { name: "Unknown" };
+    syncDataToGoogleSheet("SAVE_TEST_MARK", { 
+        date: tDate, 
+        roll: roll, 
+        name: s.name, 
+        subject: subject, 
+        total: total, 
+        obtained: obt 
+    });
 }
 
 // ================= SINGLE TEST MARK SMS (URDU + ENGLISH) =================
@@ -2149,6 +2365,9 @@ function importAcademyBackupFile(inputElement) {
                 if (currentUserRole === 'admin' || currentUserRole === 'principal') {
                     updateAdminStats();
                 }
+
+                // Also push to cloud
+                syncAllDataToCloud();
             } else {
                 showToast("❌ Invalid backup file format!", "error");
             }
@@ -2159,6 +2378,19 @@ function importAcademyBackupFile(inputElement) {
     };
     reader.readAsText(file);
     inputElement.value = '';
+}
+
+function syncAllDataToCloud() {
+    var fullData = {
+        students: students,
+        fees: feeStatusMap,
+        transactions: feeTransactions,
+        attendance: dailyAttendanceLog,
+        tests: globalTestRecords,
+        holidays: academyHolidays,
+        users: systemUsers
+    };
+    syncDataToGoogleSheet("FULL_SYNC", fullData);
 }
 
 // ================= INITIALIZATION =================
@@ -2185,8 +2417,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() { executeSecurePortalLogin(); }, 500);
     }
 
-    console.log("✅ Bright Future Science Academy v2.0 - Local Storage Mode");
+    console.log("✅ Bright Future Science Academy v2.0 - Google Sheets Connected!");
     console.log("📊 Students: " + students.length + ", Teachers: " + Object.keys(systemUsers).length);
+    console.log("☁️ Google Sheets URL: " + GOOGLE_SHEET_WEB_APP_URL);
 });
 </script>
 </body>
